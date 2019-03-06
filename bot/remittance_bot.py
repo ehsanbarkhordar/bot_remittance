@@ -187,7 +187,7 @@ def send_payment_message(bot, update):
         add_payment_to_db(owner_user_id=owner_user_id, receiver_name=receiver_name, city_name=city_name, amount=amount,
                           message_id=message_id)
         amount_message = eng_to_arabic_number(thousand_separator(amount))
-        money_request_caption = BotTexts.money_request_caption.format(eng_to_arabic_number(message_id),
+        money_request_caption = BotTexts.money_request_caption.format(message_id,
                                                                       sender_name, receiver_name,
                                                                       city_name, branch_address, amount_message,
                                                                       eng_to_arabic_number(afghan_currency_amount))

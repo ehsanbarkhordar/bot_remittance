@@ -25,7 +25,7 @@ def db_persist(func):
         func(*args, **kwargs)
         try:
             session.commit()
-            logger.info("success calling db func: " + func.__str__)
+            logger.info("success calling db func: " + func.__dir__)
         except SQLAlchemyError as e:
             logger.error(e.args)
             session.rollback()

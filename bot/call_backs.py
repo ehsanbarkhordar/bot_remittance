@@ -6,7 +6,6 @@ logger = Logger.get_logger()
 
 
 def step_success(response, user_data):
-    print(response)
     user_data = user_data[UserData.kwargs]
     user_peer = user_data[UserData.user_peer]
     step_name = user_data[UserData.step_name]

@@ -2,14 +2,14 @@ aiohttp==2.3.7
 async-timeout==2.0.1
 asyncio==3.4.3
 backoff==1.6.0
-balebot==1.6.12
+balebot==1.7.14
 chardet==3.0.4
 graypy==0.2.14
 idna==2.8
 jdatetime==3.1.0
 multidict==4.5.2
 Pillow==5.2.0
-psycopg2==2.7.6.1
+psycopg2-binary==2.7.7
 redis==3.0.1
 SQLAlchemy==1.2.16
 yarl==1.2.0

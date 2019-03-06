@@ -1,7 +1,8 @@
 from sqlalchemy import Column, String, Integer, Boolean, ForeignKey
+from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 
-from database.connect import Base
+Base = declarative_base()
 
 
 class Users(Base):
@@ -30,7 +31,8 @@ class Payments(Base):
     tracking_code = Column(String)
     message_id = Column(String)
 
-    def __init__(self, receiver_name, destination_city_name, money_amount, payment_is_done, tracking_code, owner, message_id):
+    def __init__(self, receiver_name, destination_city_name, money_amount, payment_is_done, tracking_code, owner,
+                 message_id):
         self.destination_city_name = destination_city_name
         self.receiver_name = receiver_name
         self.money_amount = money_amount
@@ -53,14 +55,3 @@ class MoneyChanger(Base):
         self.user_id = str(user_id)
         self.access_hash = str(access_hash)
         self.account_number = str(acount_numer)
-
-
-"""
-   question_id = Column(Integer, ForeignKey('Questions.id'))
-
-destination_city = Column(String)
-    money_amount = Column(String)
-    payment_done = Column(Boolean)
-    tracking_code = Column(String)
-    
-"""

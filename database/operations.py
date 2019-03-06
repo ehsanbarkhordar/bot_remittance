@@ -1,23 +1,51 @@
+from sqlalchemy import create_engine
 from sqlalchemy.exc import SQLAlchemyError
-from bot.templates import LogMessage
-from database.connect import session_factory
-from database.tables import Users, Payments
+from sqlalchemy.orm import sessionmaker
+
+from constant.templates import LogMessage
+from configs import DatabaseConfig
+from database.tables import Users, Payments, Base
 from balebot.utils.logger import Logger
 from utils.utils import generate_random_number_with_N_digits
 
-session = session_factory()
 logger = Logger.get_logger()
 
+engine = create_engine(DatabaseConfig.database_url)
+Session = sessionmaker(engine)
+session = Session()
 
-def add_user_to_bot(user_name, user_id, access_hash):
-    new_user = Users(name=user_name, user_id=user_id, access_hash=access_hash)
-    try:
-        session.add(new_user)
-        session.commit()
-        logger.info(LogMessage.user_added.format(user_id))
-    except SQLAlchemyError as e:
-        logger.error(LogMessage.db_error.format(e, "add_new_user"))
-        session.rollback()
+
+def create_all_table():
+    Base.metadata.create_all(engine)
+    return True
+
+
+def db_persist(func):
+    def persist(*args, **kwargs):
+        func(*args, **kwargs)
+        try:
+            session.commit()
+            logger.info("success calling db func: " + func.__str__)
+        except SQLAlchemyError as e:
+            logger.error(e.args)
+            session.rollback()
+            return False
+
+    return persist
+
+
+@db_persist
+def insert_to_table(table_object):
+    session.add(table_object)
+
+
+@db_persist
+def delete_from_table(table_object):
+    session.delete(table_object)
+
+
+# def select_recent_charges(peer_id):
+#     return session.query(RecentCharges).filter(RecentCharges.peer_id == peer_id).order_by(RecentCharges.date).all()
 
 
 def user_was_logged(user_id):

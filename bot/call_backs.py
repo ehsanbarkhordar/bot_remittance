@@ -1,7 +1,6 @@
-from bot.templates import UserData, LogMessage
+from constant.templates import UserData, LogMessage
 from balebot.utils.logger import Logger
 from configs import BotConfig
-from bot.templates import Step
 
 logger = Logger.get_logger()
 

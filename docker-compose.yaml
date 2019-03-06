@@ -1,53 +1,38 @@
-version: '2'
+version: '3.0'
 services:
-  pg_branches_data_locator_bot:
-    image: registry.bale.ai:2443/balepostgres:1.6.0
-    container_name: pg_branches_data_locator_bot
-    environment:
-      - POSTGRES_USER=branches_data_locator_bot
-      - POSTGRES_PASSWORD=sdhglgslahglaskjdfsfglashg@lsakjgs1231
-      - POSTGRES_DB=branches_data_locator_db
-      - TZ=Asia/Tehran
-    ports:
-      - 5447:5432
-    volumes:
-      - /home/elenoon/docker/volumes/branch_data_collector16/postgres/:/var/lib/postgresql/data/
-
-  branches_data_locator_bot:
-    image: registry2.bale.ai:2443/branches_data_locator_bot:2.4-42
-#    image: registry2.bale.ai:2443/branches_data_locator_bot:0.0-99
-    container_name: branches_data_locator_bot
+  pg_remittance:
+    image: docker.bale.ai/money/balepostgres:1.6.0
+    container_name: pg_remittance
     restart: always
     environment:
-      # PostgreSQL Config
-      - POSTGRES_USER=branches_data_locator_bot
-      - POSTGRES_PASSWORD=sdhglgslahglaskjdfsfglashg@lsakjgs1231
-      - POSTGRES_DB=branches_data_locator_db
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres123456
+      - POSTGRES_DB=my_db
+      - TZ=Asia/Tehran
+    volumes:
+      - /home/docker/volumes/pg_remittance/postgres/:/var/lib/postgresql/data/
+    ports:
+      - "5433:5432"
+  bot_remittance:
+    image: docker.bale.ai/money/bot_remittance:0.1-1
+    container_name: bot_remittance
+    environment:
+      #   PostgreSQL Config
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres123456
+      - POSTGRES_DB=my_db
+      - POSTGRES_HOST=pg_remittance
       - POSTGRES_PORT=5432
-      - POSTGRES_HOST=pg_branches_data_locator_bot
-      # Config
+      #   Config
       - BASE_URL=wss://api.bale.ai/v1/bots/
-      - BOT_TOKEN=9f2965cd2350a5a79fd404135639abe7d4f59543
-      - SYSTEM_LOCAL=fa_IR
-      - RESENDING_MAX_TRY=5
-      - RE_UPLOADING_MAX_TRY=5
-      - daily_report_time_hour=18
-      - daily_report_time_minute=57
-      - all_report_time_hour=18
-      - all_report_time_minute=57
-      - WAIT_AMOUNT=3600
-      - ADMINS=1314892980 1497526823 904801570
-      - migration_permission=0
-
-      # Log config
-      - USE_GRAYLOG=2
-      - LOG_SOURCE=pg_branches_data_locator_bot
-      - GRAYLOG_HOST=192.168.21.113
+      - TOKEN=
+      - ADMIN_LIST=
+      #   Log config
+      - USE_GRAYLOG=0
+      - SOURCE=bot_remittance_source
+      - GRAYLOG_HOST=127.0.0.1
       - GRAYLOG_PORT=12201
-      - SDK_LOG_LEVEL=20
-      - LOG_FACILITY_NAME=pg_branches_data_locator_bot_facility
+      - LOG_LEVEL=10
+      - LOG_FACILITY_NAME=bot_remittance_facility
       - MONITORING_HASH=cabb3f498ac5a037f669f658f1be08c3
-    command: python -m main
-    depends_on:
-      - pg_branches_data_locator_bot
-
+    restart: always # use always

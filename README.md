@@ -1,1 +1,1 @@
-# bot_remittance
+Remittance bot.

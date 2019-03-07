@@ -78,8 +78,12 @@ def select_money_changer_by_peer_id(peer_id):
     return session.query(MoneyChanger).filter(MoneyChanger.peer_id == peer_id).one_or_none()
 
 
-def is_user_a_money_changer(peer_id):
-    return session.query(MoneyChanger).filter(MoneyChanger.peer_id == peer_id).one_or_none()
+def select_money_changer_by_id(money_changer_id):
+    return session.query(MoneyChanger).filter(MoneyChanger.id == money_changer_id).one_or_none()
+
+
+def select_money_changers():
+    return session.query(MoneyChanger).all()
 
 
 def select_all_province_names():
@@ -88,7 +92,6 @@ def select_all_province_names():
 
 def select_branches_by_money_changer_id(money_changer_id):
     return session.query(MoneyChangerBranch).filter(MoneyChangerBranch.money_changer_id == money_changer_id).all()
-
 
 # def select_recent_charges(peer_id):
 #     return session.query(RecentCharges).filter(RecentCharges.peer_id == peer_id).order_by(RecentCharges.date).all()

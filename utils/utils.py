@@ -4,7 +4,7 @@ from balebot.config import Config
 from balebot.models.messages import TemplateMessageButton
 
 from configs import BotConfig
-from database.models import MoneyChangerBranch
+from database.models import MoneyChangerBranch, MoneyChanger
 
 
 def generate_random_number_with_N_digits(n):
@@ -62,3 +62,28 @@ def get_template_buttons_from_branches(branches):
             keywords.append(str(branch.id))
             btn_list.append(TemplateMessageButton(text=branch.address[:60], value=branch.id, action=0))
     return btn_list, keywords
+
+
+def calculate_remittance_rate(changer):
+    remittance_rate = changer.dollar_rial * changer.dollar_afghani
+    remittance_rate = remittance_rate * changer.remittance_fee_percent
+    return remittance_rate
+
+
+def get_buttons_from_money_changers(money_changers):
+    btn_list = []
+    keywords = []
+    for changer in money_changers:
+        if isinstance(changer, MoneyChanger):
+            keywords.append(str(changer.id))
+            remittance_rate = calculate_remittance_rate(changer)
+            text = changer.name + " => " + eng_to_arabic_number(str(remittance_rate))
+            btn_list.append(TemplateMessageButton(text=text, value=changer.id, action=0))
+    return btn_list, keywords
+
+
+def get_province_set_from_branches(branches):
+    province_set = set()
+    for branch in branches:
+        province_set.add(branch.province)
+    return province_set

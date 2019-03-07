@@ -5,6 +5,22 @@ from utils.utils import eng_to_arabic_number
 
 
 class BotTexts:
+    dollar_afghani_updated_successfully = " نسبت افغانی به دلار با موفقیت تغییر یافت.\n" \
+                                          "نسبت جدید: *{}*"
+    enter_new_dollar_afghani = "نسبت جدید دلار به افغانی را وارد نمایید:"
+    undefined = "نامشخص"
+    card_number_updated_successfully = "شماره کارت با موفقیت تغییر یافت.\n" \
+                                       "شماره کارت جدید: *{}*"
+    dollar_rial_updated_successfully = " نسبت دلار به ریال با موفقیت تغییر یافت.\n" \
+                                       "نسبت جدید: *{}*"
+    enter_new_dollar_rial = "نسبت جدید دلار به ریال را وارد نمایید:"
+    enter_new_card_number = "شماره کارت جدید را وارد نمایید:"
+    error = "*خطایی رخ داده است. *\nلطفا دوباره امتحان کنید."
+    remittance_fee_percent_updated_successfully = " درصد انتقال پول با موفقیت تغییر یافت.\n" \
+                                                  "درصد جدید: *{}* درصد"
+    enter_new_remittance_fee_percent = "لطفا درصد انتقال پول را به عدد وارد نمایید:"
+    enter_branch_address = "آدرس شعبه را با دقت وارد نمایید:"
+    choose_or_enter_province = "ولایت را وارد یا از بین گزینه ها انتخاب نمایید:"
     enter_sender_name = "لطفا نام پرداخت کننده را به همراه نام پدر وارد نمایید:"
     choose_one_money_changer = "لطفا صرافی موردنظر را *انتخاب* کنید:"
     back_to_main_menu = "بازگشت به منوی اصلی"
@@ -13,6 +29,12 @@ class BotTexts:
     enter_city_name = "لطفاً نام *شهر محل دریافت پول* را *انتخاب* و یا *وارد* کنید: "
     enter_receiver_name = "لطفاً نام دریافت کننده پول را *وارد* نمایید:"
     choose_one_option = "لطفاً یک گزینه را *انتخاب* کنید:"
+    money_changer_info = "نام صرافی شما: *{}*\n" \
+                         "شماره کارت ست شده: {}\n" \
+                         "نسبت دلار به ریال: *{}*\n" \
+                         "نسبت افغانی به دلار: *{}*\n" \
+                         "درصد انتقال پول: *{}*\n\n"
+
     enter_your_name = "لطفاً نام و نام خانوادگی خود را وارد نمایید:"
     welcome_message = "سلام خوش آمدید،‌ لطفاً یکی از گزینه های زیر را *انتخاب* کنید:"
     help_message = "به کمک این بازو می‌توانید مبلغ دلخواه را به فرد مورد نظر در افغانستان انتقال دهید." + "\n" \
@@ -177,7 +199,12 @@ class BotMessages:
 
 
 class BotButtons:
-    back_to_main_menu = TemplateMessageButton("بازگشت به منوی اصلی ")
+    update_dollar_afghani = TemplateMessageButton("تغییر نسبت افغانی به دلار")
+    update_card_number = TemplateMessageButton("تغییر شماره کارت")
+    update_dollar_rial = TemplateMessageButton("تغییر نسبت دلار به ریال")
+    update_remittance_fee_percent = TemplateMessageButton("تغییر درصد انتقال پول")
+    register_branch = TemplateMessageButton("ثبت شعبه جدید")
+    back_to_main_menu = TemplateMessageButton("بازگشت به منوی اصلی")
     help = TemplateMessageButton("راهنمایی")
     register = TemplateMessageButton("ثبت نام")
     remittance = TemplateMessageButton("انتقال پول")
@@ -206,7 +233,27 @@ provinces_to_branch_dict = {"کابل": BotTexts.money_changer_kabol, "هرات"
                             "مزار شریف": BotTexts.money_changer_mazar}
 
 
+class Patterns:
+    passive_loan_val = 'passive-{}'
+    active_loan_val = 'active-{}'
+    passive_loan = '^passive-([0-9]+|[۰-۹]+)$'
+    active_loan = '^active-([0-9]+|[۰-۹]+)$'
+    number_only = '^([0-9]+|[۰-۹]+)$'
+    eight_digits_number = "^[0-9]{8}$|^[۰-۹]{8}$"
+    numbers = '([0-9]+|[۰-۹]+)'
+    any_match = "(.*)"
+    float_numbers = "^[0-9]*(?:\.[0-9]*)?$"
+
+
 class Step:
+    request_remittance_fee_percent = "request_remittance_fee_percent"
+    request_dollar_afghani = "request_dollar_afghani"
+    request_dollar_rial = "request_dollar_rial"
+    update_money_changer = "update_money_changer"
+    request_card_number = "request_card_number"
+    update_remittance_fee_percent = "update_remittance_fee_percent"
+    request_branch_address = "request_branch_address"
+    request_province_name = "request_province_name"
     request_sender_name = "request_sender_name"
     get_payment_amount_with_valid_input = "get_payment_amount_with_valid_input"
     send_report = "send_report"

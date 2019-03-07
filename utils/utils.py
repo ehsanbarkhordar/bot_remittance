@@ -1,6 +1,7 @@
 from random import randint
 
 from balebot.config import Config
+from balebot.models.messages import TemplateMessageButton
 
 from configs import BotConfig
 
@@ -43,3 +44,10 @@ def is_admin(peer_id):
         return True
     else:
         return False
+
+
+def get_template_buttons_from_list(input_list):
+    btn_list = []
+    for i in input_list:
+        btn_list.append(TemplateMessageButton(text=i))
+    return btn_list

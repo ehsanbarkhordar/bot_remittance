@@ -7,14 +7,15 @@ Base = declarative_base()
 
 class MoneyChanger(Base):
     __tablename__ = "MoneyChanger"
-    peer_id = Column(String, primary_key=True)
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    peer_id = Column(String, nullable=False)
     name = Column(String, nullable=False)
     card_number = Column(String, nullable=False)
     dollar_rial = Column(Float, default=4200)
     dollar_afghani = Column(Float, default=100)
     remittance_fee_percent = Column(Float, default=1)
 
-    def __init__(self, name, peer_id, account_number):
+    def __init__(self, peer_id, name, account_number):
         self.peer_id = peer_id
         self.name = name
         self.card_number = account_number
@@ -22,24 +23,15 @@ class MoneyChanger(Base):
 
 class MoneyChangerBranch(Base):
     __tablename__ = "MoneyChangerBranch"
-    id = Column(Integer, primary_key=True)
-    peer_id = Column(String, nullable=False)
-    access_hash = Column(String, nullable=False)
-    money_changer_name = Column(String, nullable=False)
-    account_number = Column(String, nullable=False)
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    money_changer_id = Column(Integer, nullable=False)
+    province = Column(String, nullable=False)
     address = Column(Text, nullable=False)
-    province_name = Column(String, nullable=False)
-    remittance_fee = Column(Integer, default=5)
 
-    def __init__(self, peer_id, access_hash, money_changer_name, account_number, address,
-                 province_name, remittance_fee):
-        self.peer_id = peer_id
-        self.access_hash = access_hash
-        self.money_changer_name = money_changer_name
-        self.account_number = account_number
+    def __init__(self, money_changer_id, address, province):
+        self.money_changer_id = money_changer_id
         self.address = address
-        self.province_name = province_name
-        self.remittance_fee = remittance_fee
+        self.province = province
 
 # class Payments(Base):
 #     __tablename__ = "Payments"

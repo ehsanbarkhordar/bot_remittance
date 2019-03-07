@@ -4,6 +4,7 @@ from balebot.config import Config
 from balebot.models.messages import TemplateMessageButton
 
 from configs import BotConfig
+from database.models import MoneyChangerBranch
 
 
 def generate_random_number_with_N_digits(n):
@@ -51,3 +52,13 @@ def get_template_buttons_from_list(input_list):
     for i in input_list:
         btn_list.append(TemplateMessageButton(text=i))
     return btn_list
+
+
+def get_template_buttons_from_branches(branches):
+    btn_list = []
+    keywords = []
+    for branch in branches:
+        if isinstance(branch, MoneyChangerBranch):
+            keywords.append(str(branch.id))
+            btn_list.append(TemplateMessageButton(text=branch.address[:60], value=branch.id, action=0))
+    return btn_list, keywords

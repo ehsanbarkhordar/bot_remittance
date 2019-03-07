@@ -5,6 +5,10 @@ from utils.utils import eng_to_arabic_number
 
 
 class BotTexts:
+    branch_deleted_successfully = "شعبه مورد نظر با موفقیت حذف شد."
+    no_branches_found = "هیچ شعبه ای یافت نشد!"
+    choose_branch_for_remove = "شعبه مورد نظر برای حذف را انتخاب نمایید:"
+    branch_inserted_successfully = "شعبه با موفقیت افزوده شد."
     dollar_afghani_updated_successfully = " نسبت افغانی به دلار با موفقیت تغییر یافت.\n" \
                                           "نسبت جدید: *{}*"
     enter_new_dollar_afghani = "نسبت جدید دلار به افغانی را وارد نمایید:"
@@ -199,6 +203,7 @@ class BotMessages:
 
 
 class BotButtons:
+    remove_branch = TemplateMessageButton("حذف یک شعبه")
     update_dollar_afghani = TemplateMessageButton("تغییر نسبت افغانی به دلار")
     update_card_number = TemplateMessageButton("تغییر شماره کارت")
     update_dollar_rial = TemplateMessageButton("تغییر نسبت دلار به ریال")
@@ -246,6 +251,7 @@ class Patterns:
 
 
 class Step:
+    insert_branch = "insert_branch"
     request_remittance_fee_percent = "request_remittance_fee_percent"
     request_dollar_afghani = "request_dollar_afghani"
     request_dollar_rial = "request_dollar_rial"

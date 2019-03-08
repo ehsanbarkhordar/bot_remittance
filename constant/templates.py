@@ -213,13 +213,15 @@ class BotButtons:
     update_dollar_afghani = TemplateMessageButton("تغییر نسبت افغانی به دلار")
     update_card_number = TemplateMessageButton("تغییر شماره کارت")
     update_dollar_rial = TemplateMessageButton("تغییر نسبت دلار به ریال")
-    update_remittance_fee_percent = TemplateMessageButton("تغییر درصد انتقال پول")
+    update_remittance_fee_percent = TemplateMessageButton("تغییر درصد حق الزحمه انتقال پول")
     register_branch = TemplateMessageButton("ثبت شعبه جدید")
     back_to_main_menu = TemplateMessageButton("بازگشت به منوی اصلی")
     help = TemplateMessageButton("راهنمایی")
     register = TemplateMessageButton("ثبت نام")
     remittance = TemplateMessageButton("انتقال پول")
-    money_changer = TemplateMessageButton("برادران جعفری")
+    money_changer_panel = TemplateMessageButton("منو صرافی")
+    user_panel = TemplateMessageButton("منو کاربر")
+
     cities = [TemplateMessageButton("کابل"),
               TemplateMessageButton("هرات"),
               TemplateMessageButton("مزار شریف")]

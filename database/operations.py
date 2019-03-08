@@ -55,7 +55,7 @@ def delete_from_table(table_object):
         for obj in table_object:
             session.delete(obj)
     else:
-        session.add(table_object)
+        session.delete(table_object)
 
 
 @db_persist

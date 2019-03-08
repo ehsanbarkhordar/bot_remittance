@@ -14,7 +14,7 @@ def generate_random_number(n):
     return randint(range_start, range_end)
 
 
-def change_rial_to_afghan_currency(rial:float, dollar_rial:float, dollar_afghani:float):
+def change_rial_to_afghan_currency(rial: float, dollar_rial: float, dollar_afghani: float):
     rial_dollar = 1 / dollar_rial
     rial_afghani = rial_dollar * dollar_afghani
     afghani = rial_afghani * rial
@@ -100,6 +100,7 @@ def get_branches_text(branches, province):
             branch_id = str(branch.id)
             keywords.append(branch_id)
             text += BotTexts.money_changer_branch.format(address=branch.address, branch_id=branch_id)
+            text += BotTexts.fence
     return text, keywords
 
 

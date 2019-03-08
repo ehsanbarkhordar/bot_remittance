@@ -5,8 +5,8 @@ class BotConfig:
     re_uploading_max_try = int(os.environ.get('RE_UPLOADING_MAX_TRY', 3))
     resending_max_try = int(os.environ.get('RESENDING_MAX_TRY', 3))
     admin_list = os.environ.get('ADMIN_LIST', "201707397")
-    bot_token = os.environ.get('BOT_TOKEN', "2938aa8c0d1c81909eb7316af1c5b21c144715d7")  # @my_test_bot
-    # 373225249: c37abc81e3d95f0c0198ce8df87ebe15686bca50
+    bot_token = os.environ.get('BOT_TOKEN', "a9f06fec310400da3d0e3c6f3bbd8e9bba34089a")  # @tap_bot
+    # 1146359648: a9f06fec310400da3d0e3c6f3bbd8e9bba34089a
     # bot_token = os.environ.get('BOT_TOKEN', "e8e48df04ff639e34025270b5ee8c1c888aae390")  # @remittancebot
     log_level = int(os.environ.get('LOG_LEVEL', 20))
     money_changer_account_number = os.environ.get('MONEY_CHANGER_ACCOUNT_NUMBER', "6037997503351810")

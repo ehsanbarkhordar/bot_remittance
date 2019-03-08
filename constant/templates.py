@@ -1,10 +1,12 @@
 from balebot.models.base_models import FatSeqUpdate
 from balebot.models.messages import TemplateMessageButton, PhotoMessage, TextMessage
 import jdatetime
-from utils.utils import eng_to_arabic_number
 
 
 class BotTexts:
+    wage = "{} تومان کارمزد برای یک میلیون تومان"
+    choose_province = "ولایت مورد نظر خود را انتخاب نمایید:"
+    no_money_changer_found = "هیج صرافی یافت نشد!"
     branch_deleted_successfully = "شعبه مورد نظر با موفقیت حذف شد."
     no_branches_found = "هیچ شعبه ای یافت نشد!"
     choose_branch_for_remove = "شعبه مورد نظر برای حذف را انتخاب نمایید:"
@@ -28,7 +30,7 @@ class BotTexts:
     enter_sender_name = "لطفا نام پرداخت کننده را به همراه نام پدر وارد نمایید:"
     choose_one_money_changer = "لطفا صرافی موردنظر را *انتخاب* کنید:"
     back_to_main_menu = "بازگشت به منوی اصلی"
-    invalid_input = "ورودی اشتباه است،\nلطفاً مبلغ را به *عدد* وارد نمایید:"
+    invalid_amount = "ورودی اشتباه است،\nلطفاً مبلغ را به *عدد* وارد نمایید:"
     enter_amount = "لطفاً مبلغ را به *ریال* وارد نمایید:"
     enter_city_name = "لطفاً نام *شهر محل دریافت پول* را *انتخاب* و یا *وارد* کنید: "
     enter_receiver_name = "لطفاً نام دریافت کننده پول را *وارد* نمایید:"
@@ -51,9 +53,7 @@ class BotTexts:
                      + "\n" "تاریخ انتقال: *{" \
                        "}* " + "\n" + "[بازگشت به منوی اصلی](send:بازگشت به منوی اصلی)"
     now = jdatetime.datetime.now()
-    payment_date = "{}/{}/{} ساعت {}:{}".format(eng_to_arabic_number(now.year), eng_to_arabic_number(now.month),
-                                                eng_to_arabic_number(now.day), eng_to_arabic_number(now.hour),
-                                                eng_to_arabic_number(now.minute))
+
     hyper_link = "[{}](send: {})"
     select = "انتخاب"
     money_changer_mazar_address = "کفایت مارکیت منزل زیر زمیان دکان ۲۲،خدمات پولی برادران جعفری- محمدعلی"
@@ -75,10 +75,16 @@ class BotTexts:
                           "کابل: {}\n" \
                           "{}".format(money_changer_kabol_address2,
                                       hyper_link.format(select, money_changer_kabol_address2))
+    money_changer_branch = "{address}\n" \
+                           "[انتخاب](send: {branch_id})"
+    fence = "\n+++++++++++++++++++++++++++++++++++++++\n"
 
     thumb = "/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAA4KCw0LCQ4NDA0QDw4RFiQXFhQUFiwgIRokNC43NjMuMjI6QVNGOj1OPjIySGJJTlZYXV5dOEVmbWVabFNbXVn/2wBDAQ8QEBYTFioXFypZOzI7WVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVn/wAARCAA0AFoDASIAAhEBAxEB/8QAGwABAQADAQEBAAAAAAAAAAAAAAUBBAYDBwL/xAA1EAACAgEDAgMGAwcFAAAAAAABAgMRAAQFIRIxIkFRBhNhcYGRFULwFCMyUqGx0UOSk9Lh/8QAGQEBAAMBAQAAAAAAAAAAAAAAAAECBAMF/8QAJhEAAgECBAUFAAAAAAAAAAAAAAECAxEEITFBEiIykfAUQlFhgf/aAAwDAQACEQMRAD8A+kYxjAGZzGZwBmpucEmp0MkUUjxuaIdGKsKIPFefwPB8+M95ZRELYGvXyHz9MkbhuOpSfTRRS6eFZpH07m+plkKhkHV2UkX3Dd14N8Abei1s0jJFqYlEhXl4zaEgC+DyLPVQ54HJs1m6ro5cKysUPSwBvpNXR+hH3z597S6fWR6yVZZNUdOaQNJ0lZPzdRCqI7Jvir8NnuMo7Hv8c7R6hkWTWamYI508QctEGKqHKnwkdQayACAQBkXzsc41FKTj8HZYxjJOgxjGAMYzOAeGrRGgLSSmFYyJC/V0ha55+HrecxuvtNqNs1U+lkjEg6Or3gkVGQEd1BB7Uf4hyb8qvpNbE0kEqkK6MvSY3W1Yc2CPOxxWQm9ntTrpk/b9Yz6aIdKofEXAJIuxfUDVNZNWO9s0MrNSa5dSvtuvG46eSaOmjVx7tlPLqVVgSPI81z6X2IyVuu1zar3gjjno14YyFdKPUCrdXStEWK5LdHV4VOWNujnh99HO1r13EoUAInSBVjvyGP1zcySxxmp9mHbRO25zJKFkV0DyNKwJ4Kq0hpbJA+JAJ8lWtsOk05jZmjdpoSEJkYEiqKqwBolRRHHHVfcsTcZQ6lWAKkUQfPNDbNBNotRrmkmSSPUSiVAqFSvhC0TZvhV9PP5AV4Ve5QxjGCwzOYzOAYyX7QQCbb3ZUImQWsqDxxgkdRQ/zV2+NZTa+k9JAauCRYyPpX3GTdpizXp0NBGAUAXQoi74s/7RfehDP1sGl1un0wbXyNJJIi0GN+7A/IfUi+/nlfGMBKysMZh3WNGd2CqossTQA9c5LcN2m3SR4tOzR6DlSappvX4gfr4DnUqRpx4pFZzUcty3rN70mlkMSltRKDTJCL6e/c9h27XeTH3/AFrspSHTwqR2cmQ39KyUGighBsJGP19883kkmUrHD4T+aQ9I+HHf+2eZPGVJdOSOTk932LH43uHrpf8Aib/tntDv2pUgTwxSAnkxkpQ+Ruz9RnOqupSZI5JyEI8JVAbPpZ8893gdhxqJARyDS8H7ZT1NWLzl52IUnsmdfo910usYIrGOU/6cnDH5eR4HkTWb2cBA0skdsUYrwVIohh6n/wAygu4a9VCrrJKAoWqH+pFn65qjjksprP6Okaja0OtJoHJPs3uM257c0+oCB/eFfAKFUP8AOMZ6B03K+MYwSc37XTP06LSX+6nclwLs9NUPlz/QZNAAAAFAdgMYzyMe+dIz++X4T9MPeGDUvzJIzA+gFHt9v75QxjMlXVeblaOhM3TUvHIIlC1QYEjkG88fxaf+SP7H/OMZohFOCujPOTU3Zmxt2peeeYsALAJAur7fr5ZRxjM9XqNFHpP/2Q=="
 
-    money_request_caption = "کد انتقال: *{}*\nواریز کننده: *{}*\nنام دریافت کننده: *{}*\nشهر محل دریافت: *{}*\n" \
+    money_request_caption = "کد انتقال: *{}*\n" \
+                            "واریز کننده: *{}*\n" \
+                            "نام دریافت کننده: *{}*\n" \
+                            "ولایت محل دریافت: *{}*\n" \
                             "آدرس صرافی: {}\n" \
                             "مبلغ: *{}* ریال معادل *{}* افغانی"
 
@@ -251,6 +257,13 @@ class Patterns:
 
 
 class Step:
+    user_panel = "user_panel"
+    request_money_changer = "request_money_changer"
+    request_province = "request_province"
+    request_branch = "request_branch"
+    request_receiver_name = "request_receiver_name"
+    request_amount = "request_amount"
+    send_payment_message = "send_payment_message"
     insert_branch = "insert_branch"
     request_remittance_fee_percent = "request_remittance_fee_percent"
     request_dollar_afghani = "request_dollar_afghani"

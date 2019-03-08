@@ -1,23 +1,20 @@
 import asyncio
 
-from balebot.filters import TemplateResponseFilter, TextFilter, BankMessageFilter, DefaultFilter
+from balebot.filters import TemplateResponseFilter, TextFilter, DefaultFilter
 from balebot.handlers import MessageHandler, CommandHandler
 from balebot.models.messages import TemplateMessage, TextMessage, PurchaseMessage
 from balebot.models.messages.banking.money_request_type import MoneyRequestType
 from balebot.updater import Updater
 
 from configs import BotConfig
-from constant.templates import BotTexts, BotButtons, Step, ButtonText, BotMessages, provinces_to_branch_dict, Patterns
+from constant.templates import BotButtons, Step, BotMessages, Patterns
 from bot.call_backs import step_success, step_failure
 from balebot.utils.logger import Logger
-from database.models import MoneyChanger, MoneyChangerBranch
 from database.operations import select_all_province_names, update_money_changer_remittance_fee_percent, \
     select_money_changer_by_peer_id, update_money_changer_dollar_rial, \
     update_money_changer_card_number, update_money_changer_dollar_afghani, insert_to_table, \
     select_branches_by_money_changer_id, delete_from_table, select_money_changers, select_money_changer_by_id
-from utils.utils import change_rial_to_afghan_currency, eng_to_arabic_number, generate_random_number_with_N_digits, \
-    thousand_separator, get_template_buttons_from_list, arabic_to_eng_number, get_template_buttons_from_branches, \
-    get_buttons_from_money_changers, get_province_set_from_branches
+from utils.utils import *
 
 loop = asyncio.get_event_loop()
 updater = Updater(token=BotConfig.bot_token, loop=loop)
@@ -89,7 +86,7 @@ def user_panel(bot, update):
     user_peer = update.get_effective_user()
     buttons_list = [BotButtons.remittance, BotButtons.help]
     template_message = TemplateMessage(TextMessage(BotTexts.choose_one_option), buttons_list)
-    send_message(message=template_message, peer=user_peer, step=Step.start_bot_for_logged_in_users)
+    send_message(message=template_message, peer=user_peer, step=Step.user_panel)
     dispatcher.register_conversation_next_step_handler(update, handlers=common_handlers + [
         MessageHandler(TemplateResponseFilter(BotButtons.remittance.value), request_sender_name),
         MessageHandler(TemplateResponseFilter(BotButtons.help.value), help_me)
@@ -111,40 +108,32 @@ def request_money_changer(bot, update):
     dispatcher.set_conversation_data(update, key="sender_name", value=sender_name)
     money_changers = select_money_changers()
     buttons_list, keywords = get_buttons_from_money_changers(money_changers)
-    buttons_list += [BotButtons.back_to_main_menu]
-    template_message = TemplateMessage(TextMessage(BotTexts.choose_one_money_changer), buttons_list)
-    send_message(message=template_message, peer=user_peer, step=Step.start_resistance_conversation)
-    dispatcher.register_conversation_next_step_handler(update, handlers=common_handlers + [
-        MessageHandler(TemplateResponseFilter(keywords=keywords), request_receiver_name)
-    ])
-
-
-def request_receiver_name(bot, update):
-    user_peer = update.get_effective_user()
-    money_changer_id = update.get_effective_message().text
-    money_changer = select_money_changer_by_id(money_changer_id)
-    dispatcher.set_conversation_data(update, key="money_changer", value=money_changer)
-    buttons_list = [BotButtons.back_to_main_menu]
-    general_message = TextMessage(BotTexts.enter_receiver_name)
-    template_message = TemplateMessage(general_message, buttons_list)
-    send_message(message=template_message, peer=user_peer, step=Step.start_resistance_conversation)
-    dispatcher.register_conversation_next_step_handler(update, handlers=common_handlers + [
-        MessageHandler(TextFilter(), request_province)
-    ])
+    if buttons_list:
+        buttons_list += [BotButtons.back_to_main_menu]
+        template_message = TemplateMessage(TextMessage(BotTexts.choose_one_money_changer), buttons_list)
+        send_message(message=template_message, peer=user_peer, step=Step.request_money_changer)
+        dispatcher.register_conversation_next_step_handler(update, handlers=common_handlers + [
+            MessageHandler(TemplateResponseFilter(keywords=keywords), request_province)
+        ])
+    else:
+        buttons_list += [BotButtons.back_to_main_menu]
+        template_message = TemplateMessage(TextMessage(BotTexts.no_money_changer_found), buttons_list)
+        send_message(message=template_message, peer=user_peer, step=Step.request_money_changer)
+        dispatcher.finish_conversation(update)
 
 
 def request_province(bot, update):
     user_peer = update.get_effective_user()
-    receiver_name = update.get_effective_message().text
-    dispatcher.set_conversation_data(update, key="receiver_name", value=receiver_name)
-
-    money_changer = dispatcher.get_conversation_data(update, "money_changer")
+    money_changer_id = update.get_effective_message().text
+    money_changer = select_money_changer_by_id(money_changer_id)
+    dispatcher.set_conversation_data(update, "money_changer", money_changer)
     branches = select_branches_by_money_changer_id(money_changer.id)
     province_set = get_province_set_from_branches(branches)
+    dispatcher.set_conversation_data(update, "branches", branches)
     province_buttons = get_template_buttons_from_list(province_set)
     buttons_list = province_buttons + [BotButtons.back_to_main_menu]
-    template_message = TemplateMessage(TextMessage(BotTexts.enter_city_name), buttons_list)
-    send_message(message=template_message, peer=user_peer, step=Step.get_receiver_name)
+    template_message = TemplateMessage(TextMessage(BotTexts.choose_province), buttons_list)
+    send_message(message=template_message, peer=user_peer, step=Step.request_province)
     dispatcher.register_conversation_next_step_handler(update, handlers=common_handlers + [
         MessageHandler(TemplateResponseFilter(keywords=province_set), request_branch)
     ])
@@ -152,77 +141,95 @@ def request_province(bot, update):
 
 def request_branch(bot, update):
     user_peer = update.get_effective_user()
-    city_name = update.get_effective_message().text
-    dispatcher.set_conversation_data(update, key="city_name", value=city_name)
+    province = update.get_effective_message().text
+    branches = dispatcher.get_conversation_data(update, "branches")
+    branches_text, keywords = get_branches_text(branches, province)
     buttons_list = [BotButtons.back_to_main_menu]
-    branch_address = provinces_to_branch_dict.get(city_name)
-    template_message = TemplateMessage(TextMessage(branch_address), buttons_list)
-    send_message(message=template_message, peer=user_peer, step=Step.get_receiver_name)
+    template_message = TemplateMessage(TextMessage(branches_text), buttons_list)
+    send_message(message=template_message, peer=user_peer, step=Step.request_branch)
     dispatcher.register_conversation_next_step_handler(update, handlers=common_handlers + [
-        MessageHandler(TextFilter(), request_amount),
+        MessageHandler(TextFilter(keywords=keywords), request_receiver_name),
+    ])
+
+
+def request_receiver_name(bot, update):
+    user_peer = update.get_effective_user()
+    branch_id = update.get_effective_message().text
+    dispatcher.set_conversation_data(update, key="branch_id", value=branch_id)
+    buttons_list = [BotButtons.back_to_main_menu]
+    general_message = TextMessage(BotTexts.enter_receiver_name)
+    template_message = TemplateMessage(general_message, buttons_list)
+    send_message(message=template_message, peer=user_peer, step=Step.request_receiver_name)
+    dispatcher.register_conversation_next_step_handler(update, handlers=common_handlers + [
+        MessageHandler(TextFilter(), request_amount)
     ])
 
 
 def request_amount(bot, update):
     user_peer = update.get_effective_user()
-    branch_id = update.get_effective_message().text
-    dispatcher.set_conversation_data(update, key="branch_address", value=branch_id)
+    receiver_name = update.get_effective_message().text
+    dispatcher.set_conversation_data(update, key="receiver_name", value=receiver_name)
     buttons_list = [BotButtons.back_to_main_menu]
     template_message = TemplateMessage(TextMessage(BotTexts.enter_amount), buttons_list)
-    send_message(message=template_message, peer=user_peer, step=Step.get_city_name)
+    send_message(message=template_message, peer=user_peer, step=Step.request_amount)
     dispatcher.register_conversation_next_step_handler(update, handlers=common_handlers + [
-        MessageHandler(TextFilter(), send_payment_message)
+        MessageHandler(TextFilter(), get_amount)
     ])
+
+
+def get_amount(bot, update):
+    user_peer = update.get_effective_user()
+    amount = update.get_effective_message().text
+    if amount.isnumeric():
+        dispatcher.set_conversation_data(update, "remittance_amount", amount)
+        send_payment_message(bot, update)
+    else:
+        template_message = TemplateMessage(TextMessage(BotTexts.invalid_amount), [BotButtons.back_to_main_menu])
+        send_message(message=template_message, peer=user_peer, step=Step.get_payment_amount)
+        dispatcher.register_conversation_next_step_handler(update, handlers=common_handlers + [
+            MessageHandler(TextFilter(), get_amount)
+        ])
 
 
 def send_payment_message(bot, update):
     user_peer = update.get_effective_user()
-    amount = update.get_effective_message().text
-    if amount.isnumeric():
-        dispatcher.set_conversation_data(update, key="amount", value=amount)
-        owner_user_id = user_peer.peer_id
-        receiver_name = dispatcher.get_conversation_data(update, "receiver_name")
-        city_name = dispatcher.get_conversation_data(update, "city_name")
-        sender_name = dispatcher.get_conversation_data(update, "sender_name")
-        branch_address = dispatcher.get_conversation_data(update, "branch_address")
+    amount = dispatcher.get_conversation_data(update, "remittance_amount")
+    receiver_name = dispatcher.get_conversation_data(update, "receiver_name")
+    sender_name = dispatcher.get_conversation_data(update, "sender_name")
+    branch_id = dispatcher.get_conversation_data(update, "branch_id")
+    branches = dispatcher.get_conversation_data(update, "branches")
+    money_changer = dispatcher.get_conversation_data(update, "money_changer")
 
-        photo_message = BotMessages.money_request_photo_message
-        # owner = get_owner_with_user_id(owner_user_id)
-        afghan_currency_amount = eng_to_arabic_number(
-            thousand_separator(int(change_rial_to_afghan_currency(rial=int(amount), currency=140))))
+    branch = get_branch_with_branch_id(branches, branch_id)
 
-        message_id = generate_random_number_with_N_digits(6)
-        # while message_id_is_repetitive(message_id):
-        #     message_id = generate_random_number_with_N_digits(6)
+    photo_message = BotMessages.money_request_photo_message
+    dollar_rial = float(money_changer.dollar_rial)
+    dollar_afghani = float(money_changer.dollar_afghani)
+    afghani = change_rial_to_afghan_currency(rial=float(amount),
+                                             dollar_rial=dollar_rial,
+                                             dollar_afghani=dollar_afghani)
+    afghan_currency_amount = thousand_separator(int(afghani))
+    message_id = generate_random_number(6)
+    amount_message = thousand_separator(amount)
+    money_request_caption = BotTexts.money_request_caption.format(
+        message_id, sender_name, receiver_name,
+        branch.province, branch.address, amount_message,
+        afghan_currency_amount)
+    money_request_caption = eng_to_arabic_number(money_request_caption)
 
-        # add_payment_to_db(owner_user_id=owner_user_id, receiver_name=receiver_name, city_name=city_name, amount=amount,
-        #                   message_id=message_id)
-        amount_message = eng_to_arabic_number(thousand_separator(amount))
-        money_request_caption = BotTexts.money_request_caption.format(message_id,
-                                                                      sender_name, receiver_name,
-                                                                      city_name, branch_address, amount_message,
-                                                                      eng_to_arabic_number(afghan_currency_amount))
+    photo_message.caption_text = TextMessage(money_request_caption)
 
-        photo_message.caption_text = TextMessage(money_request_caption)
-
-        purchase_message = PurchaseMessage(account_number=BotConfig.money_changer_account_number, amount=amount,
-                                           money_request_type=MoneyRequestType.normal, msg=photo_message)
-        # These are for next version.
-        # kwargs = {"user_peer": user_peer, "step_name": Step.get_payment_amount_with_valid_input,
-        #           "succedent_message": None,
-        #           "message": purchase_message, "attempt": 1, "bot": bot, "update": update}
-        # bot.send_message(message=purchase_message, peer=user_peer, success_callback=step_success,
-        #                  failure_callback=step_failure,
-        #                  kwargs=kwargs)
-        send_message(message=purchase_message, peer=user_peer, step=Step.get_payment_amount)
-        dispatcher.finish_conversation(update)
-
-    else:
-        template_message = TemplateMessage(TextMessage(BotTexts.invalid_input), [BotButtons.back_to_main_menu])
-        send_message(message=template_message, peer=user_peer, step=Step.get_payment_amount)
-        dispatcher.register_conversation_next_step_handler(update, handlers=common_handlers + [
-            MessageHandler(TextFilter(), send_payment_message)
-        ])
+    purchase_message = PurchaseMessage(account_number=BotConfig.money_changer_account_number, amount=amount,
+                                       money_request_type=MoneyRequestType.normal, msg=photo_message)
+    # These are for next version.
+    # kwargs = {"user_peer": user_peer, "step_name": Step.get_payment_amount_with_valid_input,
+    #           "succedent_message": None,
+    #           "message": purchase_message, "attempt": 1, "bot": bot, "update": update}
+    # bot.send_message(message=purchase_message, peer=user_peer, success_callback=step_success,
+    #                  failure_callback=step_failure,
+    #                  kwargs=kwargs)
+    send_message(message=purchase_message, peer=user_peer, step=Step.send_payment_message)
+    dispatcher.finish_conversation(update)
 
 
 #

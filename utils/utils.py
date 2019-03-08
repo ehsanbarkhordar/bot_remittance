@@ -4,19 +4,21 @@ from balebot.config import Config
 from balebot.models.messages import TemplateMessageButton
 
 from configs import BotConfig
+from constant.templates import BotTexts
 from database.models import MoneyChangerBranch, MoneyChanger
 
 
-def generate_random_number_with_N_digits(n):
+def generate_random_number(n):
     range_start = 10 ** (n - 1)
     range_end = (10 ** n) - 1
     return randint(range_start, range_end)
 
 
-def change_rial_to_afghan_currency(rial, currency):
-    toman = int(rial) / 10
-    afghan = toman / currency
-    return afghan
+def change_rial_to_afghan_currency(rial:float, dollar_rial:float, dollar_afghani:float):
+    rial_dollar = 1 / dollar_rial
+    rial_afghani = rial_dollar * dollar_afghani
+    afghani = rial_afghani * rial
+    return afghani
 
 
 def arabic_to_eng_number(number):
@@ -64,9 +66,8 @@ def get_template_buttons_from_branches(branches):
     return btn_list, keywords
 
 
-def calculate_remittance_rate(changer):
-    remittance_rate = changer.dollar_rial * changer.dollar_afghani
-    remittance_rate = remittance_rate * changer.remittance_fee_percent
+def calculate_remittance_rate(remittance_fee_percent):
+    remittance_rate = int(remittance_fee_percent / 100 * 1000000)
     return remittance_rate
 
 
@@ -76,14 +77,33 @@ def get_buttons_from_money_changers(money_changers):
     for changer in money_changers:
         if isinstance(changer, MoneyChanger):
             keywords.append(str(changer.id))
-            remittance_rate = calculate_remittance_rate(changer)
-            text = changer.name + " => " + eng_to_arabic_number(str(remittance_rate))
+            remittance_rate = calculate_remittance_rate(changer.remittance_fee_percent)
+            remittance_wage_for_one_million = eng_to_arabic_number(str(thousand_separator(remittance_rate)))
+            text = changer.name + "/ " + BotTexts.wage.format(remittance_wage_for_one_million)
             btn_list.append(TemplateMessageButton(text=text, value=changer.id, action=0))
     return btn_list, keywords
 
 
 def get_province_set_from_branches(branches):
-    province_set = set()
+    provinces = []
     for branch in branches:
-        province_set.add(branch.province)
-    return province_set
+        provinces.append(branch.province)
+    provinces_set = sorted(set(provinces), key=provinces.index)
+    return provinces_set
+
+
+def get_branches_text(branches, province):
+    keywords = []
+    text = ""
+    for idx, branch in enumerate(branches):
+        if isinstance(branch, MoneyChangerBranch) and branch.province == province:
+            branch_id = str(branch.id)
+            keywords.append(branch_id)
+            text += BotTexts.money_changer_branch.format(address=branch.address, branch_id=branch_id)
+    return text, keywords
+
+
+def get_branch_with_branch_id(branches, branch_id):
+    for branch in branches:
+        if branch.id == int(branch_id):
+            return branch

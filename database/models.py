@@ -1,6 +1,5 @@
 from sqlalchemy import Column, String, Integer, Text, Float
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import relationship
 
 Base = declarative_base()
 
@@ -15,10 +14,13 @@ class MoneyChanger(Base):
     dollar_afghani = Column(Float, default=100)
     remittance_fee_percent = Column(Float, default=1)
 
-    def __init__(self, peer_id, name, account_number):
+    def __init__(self, peer_id, name, card_number, dollar_rial, dollar_afghani, remittance_fee_percent):
         self.peer_id = peer_id
         self.name = name
-        self.card_number = account_number
+        self.card_number = card_number
+        self.dollar_rial = dollar_rial
+        self.dollar_afghani = dollar_afghani
+        self.remittance_fee_percent = remittance_fee_percent
 
 
 class MoneyChangerBranch(Base):
@@ -28,7 +30,7 @@ class MoneyChangerBranch(Base):
     province = Column(String, nullable=False)
     address = Column(Text, nullable=False)
 
-    def __init__(self, money_changer_id, address, province):
+    def __init__(self, money_changer_id, province, address):
         self.money_changer_id = money_changer_id
         self.address = address
         self.province = province

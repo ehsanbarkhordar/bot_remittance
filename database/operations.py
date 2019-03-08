@@ -6,7 +6,7 @@ from constant.templates import LogMessage
 from configs import DatabaseConfig
 from database.models import Base, MoneyChanger, MoneyChangerBranch
 from balebot.utils.logger import Logger
-from utils.utils import generate_random_number_with_N_digits
+from utils.utils import generate_random_number
 
 logger = Logger.get_logger()
 
@@ -17,6 +17,11 @@ session = Session()
 
 def create_all_table():
     Base.metadata.create_all(engine)
+    return True
+
+
+def delete_all_table():
+    Base.metadata.drop_all(engine)
     return True
 
 
@@ -37,12 +42,20 @@ def db_persist(func):
 
 @db_persist
 def insert_to_table(table_object):
-    session.add(table_object)
+    if isinstance(table_object, list):
+        for obj in table_object:
+            session.add(obj)
+    else:
+        session.add(table_object)
 
 
 @db_persist
 def delete_from_table(table_object):
-    session.delete(table_object)
+    if isinstance(table_object, list):
+        for obj in table_object:
+            session.delete(obj)
+    else:
+        session.add(table_object)
 
 
 @db_persist

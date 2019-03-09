@@ -9,7 +9,6 @@ def step_success(response, user_data):
     user_data = user_data[UserData.kwargs]
     user_peer = user_data[UserData.user_peer]
     step_name = user_data[UserData.step_name]
-    bot = user_data[UserData.bot]
     logger.info(LogMessage.successful_step_message_sending.format(step_name),
                 extra={UserData.user_id: user_peer.peer_id, UserData.step_name: step_name, "tag": "info"})
     if user_data.get(UserData.succedent_message):

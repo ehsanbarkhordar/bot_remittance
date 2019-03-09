@@ -9,7 +9,6 @@ class BotConfig:
     # 1146359648: a9f06fec310400da3d0e3c6f3bbd8e9bba34089a
     # bot_token = os.environ.get('BOT_TOKEN', "e8e48df04ff639e34025270b5ee8c1c888aae390")  # @remittancebot
     log_level = int(os.environ.get('LOG_LEVEL', 20))
-    money_changer_account_number = os.environ.get('MONEY_CHANGER_ACCOUNT_NUMBER', "6037997503351810")
 
 
 class DatabaseConfig:

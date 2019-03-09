@@ -1,8 +1,8 @@
 import asyncio
 
-from balebot.filters import TemplateResponseFilter, TextFilter, DefaultFilter
+from balebot.filters import TemplateResponseFilter, TextFilter, DefaultFilter, BankMessageFilter
 from balebot.handlers import MessageHandler, CommandHandler
-from balebot.models.messages import TemplateMessage, TextMessage, PurchaseMessage
+from balebot.models.messages import TemplateMessage, TextMessage, PurchaseMessage, BankMessage
 from balebot.models.messages.banking.money_request_type import MoneyRequestType
 from balebot.updater import Updater
 
@@ -35,17 +35,11 @@ def send_message(message, peer, step, succedent_message=None):
 @dispatcher.message_handler(DefaultFilter())
 def start(bot, update):
     user_peer = update.get_effective_user()
-    buttons_list = [BotButtons.money_changer_panel, BotButtons.user_panel]
-    template_message = TemplateMessage(general_message=TextMessage(BotTexts.choose_one_option), btn_list=buttons_list)
-    send_message(message=template_message, peer=user_peer, step=Step.help)
-    dispatcher.finish_conversation(update)
-
-    # if money_changer and isinstance(money_changer, MoneyChanger):
-    #     money_changer_panel(bot, update)
-    #     # user_panel(bot, update)
-    #
-    # else:
-    #     user_panel(bot, update)
+    money_changer = select_money_changer_by_peer_id(user_peer.peer_id)
+    if money_changer and isinstance(money_changer, MoneyChanger):
+        money_changer_panel(bot, update)
+    else:
+        user_panel(bot, update)
 
 
 @dispatcher.message_handler(TemplateResponseFilter([BotButtons.help.value]))
@@ -57,36 +51,7 @@ def help_me(bot, update):
     dispatcher.register_conversation_next_step_handler(update, handlers=common_handlers)
 
 
-#
-# def request_user_name(bot, update):
-#     user_peer = update.get_effective_user()
-#     buttons_list = [BotButtons.back_to_main_menu]
-#     template_message = TemplateMessage(TextMessage(BotTexts.enter_your_name), buttons_list)
-#     send_message(message=template_message, peer=user_peer, step=Step.register)
-#     dispatcher.register_conversation_next_step_handler(update, handlers=common_handlers + [
-#         MessageHandler(TextFilter(), get_name_from_user),
-#     ])
-#
-#
-# def get_name_from_user(bot, update):
-#     user_peer = update.get_effective_user()
-#     user_name = update.get_effective_message().text
-#     user_id = user_peer.peer_id
-#     access_hash = user_peer.access_hash
-#     user_panel(bot, update)
-
-#
-# def user_panel(bot, update):
-#     user_peer = update.get_effective_user()
-#     buttons_list = [BotButtons.remittance, BotButtons.help]
-#     template_message = TemplateMessage(TextMessage(BotTexts.choose_one_option), buttons_list)
-#     send_message(message=template_message, peer=user_peer, step=Step.start_bot_for_logged_in_users)
-#     dispatcher.register_conversation_next_step_handler(update, handlers=common_handlers + [
-#         MessageHandler(TemplateResponseFilter(BotButtons.remittance.value), request_sender_name),
-#         MessageHandler(TemplateResponseFilter(BotButtons.help.value), help_me)
-#     ])
-
-@dispatcher.message_handler(TemplateResponseFilter([BotButtons.user_panel.value]))
+# @dispatcher.message_handler(TemplateResponseFilter([BotButtons.user_panel.value]))
 def user_panel(bot, update):
     user_peer = update.get_effective_user()
     buttons_list = [BotButtons.remittance, BotButtons.help]
@@ -224,15 +189,8 @@ def send_payment_message(bot, update):
 
     photo_message.caption_text = TextMessage(money_request_caption)
 
-    purchase_message = PurchaseMessage(account_number=BotConfig.money_changer_account_number, amount=amount,
+    purchase_message = PurchaseMessage(account_number=money_changer.card_number, amount=amount,
                                        money_request_type=MoneyRequestType.normal, msg=photo_message)
-    # These are for next version.
-    # kwargs = {"user_peer": user_peer, "step_name": Step.get_payment_amount_with_valid_input,
-    #           "succedent_message": None,
-    #           "message": purchase_message, "attempt": 1, "bot": bot, "update": update}
-    # bot.send_message(message=purchase_message, peer=user_peer, success_callback=step_success,
-    #                  failure_callback=step_failure,
-    #                  kwargs=kwargs)
     send_message(message=purchase_message, peer=user_peer, step=Step.send_payment_message)
     dispatcher.finish_conversation(update)
 
@@ -281,11 +239,11 @@ def send_payment_message(bot, update):
 #
 
 # +++++++++++++++++++++++++++++++++++++++ Money Changer Panel ++++++++++++++++++++++++++++++++++++++++++++++++
-@dispatcher.message_handler(TemplateResponseFilter([BotButtons.money_changer_panel.value]))
+# @dispatcher.message_handler(TemplateResponseFilter([BotButtons.money_changer_panel.value]))
 def money_changer_panel(bot, update):
     user_peer = update.get_effective_user()
 
-    money_changer = select_money_changer_by_peer_id("201707397")
+    money_changer = select_money_changer_by_peer_id(user_peer.peer_id)
     buttons_list = [BotButtons.register_branch, BotButtons.update_card_number, BotButtons.update_dollar_rial,
                     BotButtons.update_dollar_afghani, BotButtons.update_remittance_fee_percent,
                     BotButtons.remove_branch, BotButtons.help]
@@ -334,7 +292,7 @@ def insert_branch(bot, update):
     user_peer = update.get_effective_user()
     address = update.get_effective_message().text
     province = dispatcher.get_conversation_data(update, "province")
-    money_changer = select_money_changer_by_peer_id("201707397")
+    money_changer = select_money_changer_by_peer_id(user_peer.peer_id)
     table_object = MoneyChangerBranch(money_changer_id=money_changer.id, address=address, province=province)
     res = insert_to_table(table_object)
     buttons_list = [BotButtons.back_to_main_menu]
@@ -351,7 +309,7 @@ def insert_branch(bot, update):
 @dispatcher.message_handler(TemplateResponseFilter(BotButtons.remove_branch.value))
 def show_current_money_branches(bot, update):
     user_peer = update.get_effective_user()
-    money_changer = select_money_changer_by_peer_id("201707397")
+    money_changer = select_money_changer_by_peer_id(user_peer.peer_id)
     branches = select_branches_by_money_changer_id(money_changer_id=money_changer.id)
     dispatcher.set_conversation_data(update, "branches", branches)
     if branches:
@@ -435,7 +393,7 @@ def update_money_changer(bot, update):
     user_peer = update.get_effective_user()
     text_entered = arabic_to_eng_number(update.get_effective_message().text)
     previous_state = dispatcher.get_conversation_data(update, "previous_state")
-    money_changer = select_money_changer_by_peer_id("201707397")
+    money_changer = select_money_changer_by_peer_id(user_peer.peer_id)
     res = None
     text_message = None
     if previous_state == request_remittance_fee_percent:

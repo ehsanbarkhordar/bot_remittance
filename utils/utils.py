@@ -1,6 +1,4 @@
 from random import randint
-
-from balebot.config import Config
 from balebot.models.messages import TemplateMessageButton
 
 from configs import BotConfig

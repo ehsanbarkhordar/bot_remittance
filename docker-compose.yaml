@@ -25,7 +25,7 @@ services:
       - POSTGRES_PORT=5432
       #   Config
       - BASE_URL=wss://api.bale.ai/v1/bots/
-      - TOKEN=a9f06fec310400da3d0e3c6f3bbd8e9bba34089a
+      - BOT_TOKEN=a9f06fec310400da3d0e3c6f3bbd8e9bba34089a
       #   Log config
       - USE_GRAYLOG=0
       - SOURCE=bot_remittance_source
@@ -35,3 +35,5 @@ services:
       - LOG_FACILITY_NAME=bot_remittance_facility
       - MONITORING_HASH=cabb3f498ac5a037f669f658f1be08c3
     restart: always # use always
+    depends_on:
+      - pg_remittance

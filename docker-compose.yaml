@@ -1,7 +1,7 @@
 version: '3.0'
 services:
   pg_remittance:
-    image: docker.bale.ai/money/balepostgres:1.6.0
+    image: postgres:9.5
     container_name: pg_remittance
     restart: always
     environment:
@@ -14,7 +14,7 @@ services:
     ports:
       - "5433:5432"
   bot_remittance:
-    image: docker.bale.ai/money/bot_remittance:0.1-1
+    image: barkhordar/bot_remittance:0.2-3
     container_name: bot_remittance
     environment:
       #   PostgreSQL Config
@@ -25,8 +25,7 @@ services:
       - POSTGRES_PORT=5432
       #   Config
       - BASE_URL=wss://api.bale.ai/v1/bots/
-      - TOKEN=
-      - ADMIN_LIST=
+      - TOKEN=a9f06fec310400da3d0e3c6f3bbd8e9bba34089a
       #   Log config
       - USE_GRAYLOG=0
       - SOURCE=bot_remittance_source

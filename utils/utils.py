@@ -12,7 +12,7 @@ def generate_random_number(n):
     return randint(range_start, range_end)
 
 
-def change_rial_to_afghan_currency(rial: float, dollar_rial: float, dollar_afghani: float):
+def change_rial_to_afghan_currency(rial: int, dollar_rial: float, dollar_afghani: float):
     rial_dollar = 1 / dollar_rial
     rial_afghani = rial_dollar * dollar_afghani
     afghani = rial_afghani * rial
@@ -35,7 +35,7 @@ def eng_to_arabic_number(number):
 
 def thousand_separator(number):
     number = int(number)
-    return '{0:,}'.format(number)
+    return str('{0:,}'.format(number))
 
 
 def is_admin(peer_id):

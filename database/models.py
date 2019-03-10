@@ -1,4 +1,6 @@
-from sqlalchemy import Column, String, Integer, Text, Float
+import datetime
+
+from sqlalchemy import Column, String, Integer, Text, Float, DateTime
 from sqlalchemy.ext.declarative import declarative_base
 
 Base = declarative_base()
@@ -35,24 +37,29 @@ class MoneyChangerBranch(Base):
         self.address = address
         self.province = province
 
-# class Payments(Base):
-#     __tablename__ = "Payments"
-#     id = Column(Integer, primary_key=True)
-#     owner_id = Column(Integer, ForeignKey('Users.id'))
-#     owner = relationship("Users", back_populates="payments")
-#     receiver_name = Column(String)
-#     destination_city_name = Column(String)
-#     money_amount = Column(String)
-#     payment_is_done = Column(Boolean)
-#     tracking_code = Column(String)
-#     message_id = Column(String)
-#
-#     def __init__(self, receiver_name, destination_city_name, money_amount, payment_is_done, tracking_code, owner,
-#                  message_id):
-#         self.destination_city_name = destination_city_name
-#         self.receiver_name = receiver_name
-#         self.money_amount = money_amount
-#         self.payment_is_done = payment_is_done
-#         self.tracking_code = tracking_code
-#         self.owner = owner
-#         self.message_id = str(message_id)
+
+class PaymentRequest(Base):
+    __tablename__ = "PaymentRequest"
+    id = Column(Integer, primary_key=True)
+    message_id = Column(String, nullable=False)
+    payer_peer_id = Column(String, nullable=False)
+    money_changer_peer_id = Column(String, nullable=False)
+
+    sender_name = Column(String)
+    receiver_name = Column(String)
+    province = Column(String)
+    money_changer_branch_id = Column(Integer)
+    remittance_amount = Column(String)
+    date_time = Column(DateTime)
+
+    def __init__(self, message_id, payer_peer_id, money_changer_peer_id, sender_name, receiver_name, province,
+                 money_changer_branch_id, remittance_amount, date_time=datetime.datetime.now()):
+        self.message_id = message_id
+        self.payer_peer_id = str(payer_peer_id)
+        self.money_changer_peer_id = str(money_changer_peer_id)
+        self.sender_name = sender_name
+        self.receiver_name = receiver_name
+        self.province = province
+        self.money_changer_branch_id = money_changer_branch_id
+        self.remittance_amount = remittance_amount
+        self.date_time = date_time

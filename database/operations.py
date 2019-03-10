@@ -3,7 +3,7 @@ from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import sessionmaker
 
 from configs import DatabaseConfig
-from database.models import Base, MoneyChanger, MoneyChangerBranch
+from database.models import Base, MoneyChanger, MoneyChangerBranch, PaymentRequest
 from balebot.utils.logger import Logger
 
 logger = Logger.get_logger()
@@ -102,3 +102,7 @@ def select_all_province_names():
 
 def select_branches_by_money_changer_id(money_changer_id):
     return session.query(MoneyChangerBranch).filter(MoneyChangerBranch.money_changer_id == money_changer_id).all()
+
+
+def select_last_payment_request():
+    return session.query(PaymentRequest).order_by(PaymentRequest.id.desc()).first()

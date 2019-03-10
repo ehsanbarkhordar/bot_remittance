@@ -1,5 +1,5 @@
 from bot.remittance_bot import updater
-from database.models import MoneyChanger, MoneyChangerBranch
+from database.models import MoneyChanger, MoneyChangerBranch, PaymentRequest
 from database.operations import create_all_table, insert_to_table, drop_all_table, engine
 
 
@@ -22,7 +22,7 @@ def insert_mock_data():
 
 
 if __name__ == '__main__':
-    if not engine.dialect.has_table(engine, MoneyChanger.__tablename__):  # If table don't exist, Create.
+    if not engine.dialect.has_table(engine, PaymentRequest.__tablename__):  # If table don't exist, Create.
         drop_all_table()
         create_all_table()
         insert_mock_data()

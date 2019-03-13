@@ -12,11 +12,11 @@ def generate_random_number(n):
     return randint(range_start, range_end)
 
 
-def change_rial_to_afghan_currency(rial: int, dollar_rial: float, dollar_afghani: float):
-    rial_dollar = 1 / dollar_rial
-    rial_afghani = rial_dollar * dollar_afghani
-    afghani = rial_afghani * rial
-    return afghani
+def change_rial_to_afghan_currency(rial: int, dollar_rial: float, dollar_afghani: float, remittance_fee_percent: float):
+    rial_afghani = dollar_afghani / dollar_rial
+    afghani = rial * rial_afghani
+    afghani_fee = afghani * (remittance_fee_percent / 100)
+    return afghani - afghani_fee
 
 
 def arabic_to_eng_number(number):

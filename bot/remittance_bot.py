@@ -207,7 +207,8 @@ def send_payment_message(bot, update):
     dollar_afghani = float(money_changer.dollar_afghani)
     afghani = change_rial_to_afghan_currency(rial=int(remittance_amount),
                                              dollar_rial=dollar_rial,
-                                             dollar_afghani=dollar_afghani)
+                                             dollar_afghani=dollar_afghani,
+                                             remittance_fee_percent=money_changer.remittance_fee_percent)
     afghan_currency_amount = thousand_separator(int(afghani))
     last_payment_request = select_last_payment_request()
     if last_payment_request:

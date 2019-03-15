@@ -9,11 +9,9 @@ from balebot.models.messages.banking.money_request_type import MoneyRequestType
 from balebot.updater import Updater
 from khayyam3 import JalaliDatetime
 
-from configs import BotConfig
 from constant.templates import BotButtons, Step, BotMessages, Patterns, LogMessage
 from bot.call_backs import step_success, step_failure
 from balebot.utils.logger import Logger
-
 from database.models import PaymentRequest
 from database.operations import select_all_province_names, update_money_changer_remittance_fee_percent, \
     select_money_changer_by_peer_id, update_money_changer_dollar_rial, \
@@ -38,7 +36,7 @@ def send_message(message, peer, step, succedent_message=None):
                      failure_callback=step_failure, kwargs=kwargs)
 
 
-# @dispatcher.message_handler(DefaultFilter())
+@dispatcher.message_handler(DefaultFilter())
 def start(bot, update):
     user_peer = update.get_effective_user()
     money_changer = select_money_changer_by_peer_id(user_peer.peer_id)
@@ -250,13 +248,11 @@ def send_payment_message(bot, update):
     dispatcher.finish_conversation(update)
 
 
-@dispatcher.message_handler(DefaultFilter())
+@dispatcher.message_handler(BankMessageFilter())
 def payment_success(bot, update):
-    update = BotTexts.test_update_22
     message = update.get_effective_message()
     user_peer = update.get_effective_user()
-    peer_id = user_peer.peer_id
-    peer_id = 11
+    peer_id = int(user_peer.peer_id)
     if isinstance(message, BankMessage) and peer_id == 11:
         receipt = message.get_receipt()
         code = receipt.regarding.splitlines()[0]

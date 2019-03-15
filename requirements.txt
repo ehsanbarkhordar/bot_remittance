@@ -7,7 +7,7 @@ balebot==1.7.14
 chardet==3.0.4
 graypy==0.2.14
 idna==2.8
-jdatetime==3.1.0
+Khayyam3==1.0.0
 multidict==4.5.2
 Pillow==5.2.0
 psycopg2-binary==2.7.7

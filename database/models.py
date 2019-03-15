@@ -7,7 +7,7 @@ Base = declarative_base()
 
 
 class MoneyChanger(Base):
-    __tablename__ = "MoneyChanger"
+    __tablename__ = "money_changers"
     id = Column(Integer, primary_key=True, autoincrement=True)
     peer_id = Column(Integer, nullable=False)
     access_hash = Column(String)
@@ -27,7 +27,7 @@ class MoneyChanger(Base):
 
 
 class MoneyChangerBranch(Base):
-    __tablename__ = "MoneyChangerBranch"
+    __tablename__ = "money_changer_branches"
     id = Column(Integer, primary_key=True, autoincrement=True)
     money_changer_id = Column(Integer, nullable=False)
     province = Column(String, nullable=False)
@@ -40,7 +40,7 @@ class MoneyChangerBranch(Base):
 
 
 class PaymentRequest(Base):
-    __tablename__ = "PaymentRequest"
+    __tablename__ = "payment_requests"
     id = Column(Integer, primary_key=True)
     code = Column(String, nullable=False)
     money_changer_peer_id = Column(Integer, nullable=False)

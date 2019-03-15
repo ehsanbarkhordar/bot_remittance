@@ -1,3 +1,5 @@
+import datetime
+
 from sqlalchemy import create_engine
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import sessionmaker
@@ -84,6 +86,19 @@ def update_money_changer_card_number(money_changer, card_number):
         money_changer.card_number = card_number
 
 
+@db_persist
+def update_money_changer_access_hash(money_changer, access_hash):
+    if isinstance(money_changer, MoneyChanger):
+        money_changer.access_hash = access_hash
+
+
+@db_persist
+def update_payment_is_done(payment_request):
+    if isinstance(payment_request, PaymentRequest):
+        payment_request.is_done = True
+        payment_request.pay_date_time = datetime.datetime.now()
+
+
 def select_money_changer_by_peer_id(peer_id):
     return session.query(MoneyChanger).filter(MoneyChanger.peer_id == peer_id).one_or_none()
 
@@ -92,8 +107,8 @@ def select_money_changer_by_id(money_changer_id):
     return session.query(MoneyChanger).filter(MoneyChanger.id == money_changer_id).one_or_none()
 
 
-def select_money_changers():
-    return session.query(MoneyChanger).all()
+def select_ready_money_changers():
+    return session.query(MoneyChanger).filter(MoneyChanger.access_hash.isnot(None)).all()
 
 
 def select_all_province_names():
@@ -106,3 +121,7 @@ def select_branches_by_money_changer_id(money_changer_id):
 
 def select_last_payment_request():
     return session.query(PaymentRequest).order_by(PaymentRequest.id.desc()).first()
+
+
+def select_payment_with_code(code):
+    return session.query(PaymentRequest).filter(PaymentRequest.code == code).one_or_none()

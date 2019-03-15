@@ -1,41 +1,41 @@
 from balebot.models.base_models import FatSeqUpdate
 from balebot.models.messages import TemplateMessageButton, PhotoMessage, TextMessage
-import jdatetime
 
 
 class BotTexts:
+    son = " ولد "
     wage = "{} تومان کارمزد برای یک میلیون تومان"
-    choose_province = "*ولایت* مورد نظر خود را انتخاب نمایید:"
+    choose_province = "*ولایت* مورد نظر خود را انتخاب کنید:"
     no_money_changer_found = "هیج صرافی یافت نشد!"
     branch_deleted_successfully = "شعبه مورد نظر با موفقیت حذف شد."
     no_branches_found = "هیچ شعبه ای یافت نشد!"
-    choose_branch_for_remove = "شعبه مورد نظر برای حذف را انتخاب نمایید:"
+    choose_branch_for_remove = "شعبه مورد نظر برای حذف را انتخاب کنید:"
     branch_inserted_successfully = "شعبه با موفقیت افزوده شد."
     dollar_afghani_updated_successfully = " نسبت افغانی به دلار با موفقیت تغییر یافت.\n" \
                                           "نسبت جدید: *{}*"
-    enter_new_dollar_afghani = "نسبت جدید دلار به افغانی را وارد نمایید:"
+    enter_new_dollar_afghani = "نسبت جدید دلار به افغانی را وارد کنید:"
     undefined = "نامشخص"
     card_number_updated_successfully = "شماره کارت با موفقیت تغییر یافت.\n" \
                                        "شماره کارت جدید: *{}*"
     dollar_rial_updated_successfully = " نسبت دلار به ریال با موفقیت تغییر یافت.\n" \
                                        "نسبت جدید: *{}*"
-    enter_new_dollar_rial = "نسبت جدید دلار به ریال را وارد نمایید:"
-    enter_new_card_number = "شماره کارت جدید را وارد نمایید:"
+    enter_new_dollar_rial = "نسبت جدید دلار به ریال را وارد کنید:"
+    enter_new_card_number = "شماره کارت جدید را وارد کنید:"
     error = "*خطایی رخ داده است. *\nلطفا دوباره امتحان کنید."
     remittance_fee_percent_updated_successfully = " درصد انتقال پول با موفقیت تغییر یافت.\n" \
                                                   "درصد جدید: *{}* درصد"
-    enter_new_remittance_fee_percent = "لطفا درصد انتقال پول را به عدد وارد نمایید:"
-    enter_branch_address = "آدرس شعبه را با دقت وارد نمایید:"
-    choose_or_enter_province = "ولایت را وارد یا از بین گزینه ها انتخاب نمایید:"
-    enter_sender_father_name = "لطفا نام پدر پرداخت کننده را وارد نمایید:"
-    enter_sender_name = "لطفا *نام و نام خانوادگی* واریز کننده را وارد نمایید:"
+    enter_new_remittance_fee_percent = "لطفا درصد انتقال پول را به عدد وارد کنید:"
+    enter_branch_address = "آدرس شعبه را با دقت وارد کنید:"
+    choose_or_enter_province = "ولایت را وارد یا از بین گزینه ها انتخاب کنید:"
+    enter_sender_father_name = "لطفا نام پدر پرداخت کننده را وارد کنید:"
+    enter_sender_name = "لطفا *نام و نام خانوادگی* واریز کننده را وارد کنید:"
     choose_one_money_changer = "لطفا صرافی موردنظر خود را از بین صرافی‌های زیر *انتخاب* کنید:"
     back_to_main_menu = "بازگشت به منوی اصلی"
-    invalid_amount = "ورودی اشتباه است،\nلطفاً مبلغ را به *عدد* وارد نمایید:"
-    enter_amount = "لطفاً مبلغ را به *ریال* وارد نمایید:"
+    invalid_amount = "ورودی اشتباه است،\nلطفاً مبلغ را به *عدد* وارد کنید:"
+    enter_amount = "لطفاً مبلغ را به *ریال* وارد کنید:"
     enter_city_name = "لطفاً نام *شهر محل دریافت پول* را *انتخاب* و یا *وارد* کنید: "
-    enter_receiver_name = "لطفاً *نام* دریافت کننده پول را *وارد* نمایید:"
-    enter_receiver_father_name = "لطفاً *نام پدر* دریافت کننده پول را *وارد* نمایید:"
+    enter_receiver_name = "لطفاً *نام* دریافت کننده پول را *وارد* کنید:"
+    enter_receiver_father_name = "لطفاً *نام پدر* دریافت کننده پول را *وارد* کنید:"
     choose_one_option = "لطفاً یک گزینه را *انتخاب* کنید:"
     money_changer_info = "نام صرافی شما: *{}*\n" \
                          "شماره کارت ست شده: {}\n" \
@@ -43,7 +43,7 @@ class BotTexts:
                          "نسبت افغانی به دلار: *{}*\n" \
                          "درصد انتقال پول: *{}*\n\n"
 
-    enter_your_name = "لطفاً نام و نام خانوادگی خود را وارد نمایید:"
+    enter_your_name = "لطفاً نام و نام خانوادگی خود را وارد کنید:"
     welcome_message = "سلام خوش آمدید،‌ لطفاً یکی از گزینه های زیر را *انتخاب* کنید:"
     help_message = "به کمک این بازو می توانید پیام انتقال" \
                    " مبلغ دلخواه خودتان را برای فرد مورد نظرتان در *افغانستان* ارسال کنید.\n" \
@@ -53,36 +53,20 @@ class BotTexts:
                    "4. در نهایت، مبلغ مورد نظرتان به ريال را که به حساب فرد مورد اعتماد صراف می رود، وارد کنید تا پیام پرداخت پول را مشاهده کنید. با زدن کلید پرداخت، مبلغ مورد نظر شما(در وجه ریال) به حساب فرد مورد اعتماد صراف می رود.\n" \
                    "5. پس از پرداخت پول، رسید انتقال وجه و شماره ای که باید با آن پول را از صراف یا نماینده وی در افغانستان، به افغانی دریافت کنید، در اختیار شما قرار می گیرد. اگر بخواهید این پیام برای بستگان شما نیز فرستاده می شود تا با ارائه آن به صرافی مراجعه و مبلغ را از صراف یا نماینده وی بگیرند."
 
-    report_message = "*رسید انتقال*" + "\n" + "انتقال پول با *موفقیت* انجام شد." \
-                     + "\n" + "آقا/خانم *{}* می‌تواند در " \
-                              "شهر *{}* با ارائه کد *{}* " \
-                              "مبلغ *{}* افغانی،معادل *{}* ریال را از صرافی " \
-                              "*افضلی-صلواتی* دریافت کند." \
-                     + "\n" "تاریخ انتقال: *{" \
-                       "}* " + "\n" + "[بازگشت به منوی اصلی](send:بازگشت به منوی اصلی)"
-    now = jdatetime.datetime.now()
+    report_message = "*رسید انتقال*\n\n" \
+                     "انتقال پول با *موفقیت* انجام شد.\n" \
+                     "تاریخ انتقال: *{}*\n" \
+                     "⬅️ واریز کننده:  {}\n" \
+                     "➡️ دریافت کننده:  {}\n" \
+                     "کد انتقال:  *{}*\n" \
+                     "ولایت:  {}\n" \
+                     "🏦 آدرس:  {}\n" \
+                     "🇮🇷 مبلغ ریال پرداخت شده:  *{}*\n" \
+                     "🇦🇫 مبلغ افغانی قابل دریافت:  *{}*"
 
     hyper_link = "[{}](send: {})"
     select = "انتخاب"
-    money_changer_mazar_address = "کفایت مارکیت منزل زیر زمیان دکان ۲۲،خدمات پولی برادران جعفری- محمدعلی"
-    money_changer_mazar = "مزار شریف: {}\n" \
-                          "{}".format(money_changer_mazar_address,
-                                      hyper_link.format(select, money_changer_mazar_address))
 
-    money_changer_harat_address = "خراسان مارکیت: منزل تحتانی،دکان 334 صرافی برادران جعفری؛ محمد"
-    money_changer_harat = "هرات: {}\n" \
-                          "{}".format(money_changer_harat_address,
-                                      hyper_link.format(select, money_changer_harat_address))
-
-    money_changer_kabol_address1 = "شعبه 1 : سرای شهزاده منزل سوم، دکان ۲۱۴،صرافی برادران جعفری -محمد جعفری"
-    money_changer_kabol_address2 = "شعبه 2 :  کابل-پلسوخته -مارکیت محمدی، منزل دوم، دکان 70 سیدعلی-صرافی و خدمات پولی برادران جعفری"
-    money_changer_kabol = "کابل: {}\n" \
-                          "{}".format(money_changer_kabol_address1,
-                                      hyper_link.format(select, money_changer_kabol_address1)) + \
-                          "\n======================\n" \
-                          "کابل: {}\n" \
-                          "{}".format(money_changer_kabol_address2,
-                                      hyper_link.format(select, money_changer_kabol_address2))
     money_changer_branch = "{address}\n" \
                            "[انتخاب](send: {branch_id})"
     fence = "\n+++++++++++++++++++++++++++++++++++++++\n"
@@ -96,117 +80,8 @@ class BotTexts:
                             "آدرس صرافی: {}\n" \
                             "مبلغ: *{}* ریال معادل *{}* افغانی"
 
-    test_update_3 = FatSeqUpdate('{"$type":"FatSeqUpdate","seq":1556,"body":{"$type":"Message","peer":{"$type":"User",'
-                                 '"id":11,"accessHash":"3192746565014995892"},"sender":{"$type":"User","id":11,'
-                                 '"accessHash":"3192746565014995892"},"date":"1547885026193",'
-                                 '"randomId":"-2226549050919207673","message":{"$type":"BankMessage","message":{'
-                                 '"$type":"ReceiptMessage","message":{"$type":"MapValue","items":[{"key":"fa",'
-                                 '"value":{"$type":"StringVal","text":"<html><span><b>انتقال '
-                                 'پول</b></span><br/><span>مبلغ دریافتی: </span><span><font color=\'#40d0a3\'>۱۰۰+ '
-                                 'ریال</font></span><br/><span>کارت مبدا: '
-                                 '</span><span>۶۰۳۷۹۹XXXXXX۷۰۷۲</span><br/><span>کارت مقصد: '
-                                 '</span><span>۶۰۳۷۹۹XXXXXX۲۱۰۶</span><br/><span>صاحب کارت مقصد: </span><span>محمد '
-                                 'اژدری</span><br/><span>واریزکننده: </span><span>S.shad - @sshad</span><br/><span>بابت: '
-                                 '</span><span>شماره انتقال: ۱۰۰۰۲\\nواریز کننده: *محمدس*\\nنام دریافت کننده: '
-                                 '*آقاکریمی*\\nشهر محل دریافت: *جنت آباد*\\nمبلغ: *۱۰۰* ریال معادل *۰* '
-                                 'افغانی</span><br/><span>توضیحات: </span><span>رسید سه</span><br/><span>شماره پیگیری: '
-                                 '</span><span>۱۱۳۹۲۹</span><br/><span>تاریخ انتقال: '
-                                 '</span><span><date>۱۵۴۷۸۸۵۰۲۶۱۴۱</date></span><br/><span>#کارت_ب_کارت #دریافت '
-                                 '#موفق</span></html>"}},{"key":"en","value":{"$type":"StringVal",'
-                                 '"text":"<html><span><b>انتقال پول</b></span><br/><span>مبلغ دریافتی: </span><span><font '
-                                 'color=\'#40d0a3\'>۱۰۰+ ریال</font></span><br/><span>کارت مبدا: '
-                                 '</span><span>۶۰۳۷۹۹XXXXXX۷۰۷۲</span><br/><span>کارت مقصد: '
-                                 '</span><span>۶۰۳۷۹۹XXXXXX۲۱۰۶</span><br/><span>صاحب کارت مقصد: </span><span>محمد '
-                                 'اژدری</span><br/><span>واریزکننده: </span><span>S.shad - @sshad</span><br/><span>بابت: '
-                                 '</span><span>شماره انتقال: ۱۰۰۰۲\\nواریز کننده: *محمدس*\\nنام دریافت کننده: '
-                                 '*آقاکریمی*\\nشهر محل دریافت: *جنت آباد*\\nمبلغ: *۱۰۰* ریال معادل *۰* '
-                                 'افغانی</span><br/><span>توضیحات: </span><span>رسید سه</span><br/><span>شماره پیگیری: '
-                                 '</span><span>۱۱۳۹۲۹</span><br/><span>تاریخ انتقال: '
-                                 '</span><span><date>۱۵۴۷۸۸۵۰۲۶۱۴۱</date></span><br/><span>#کارت_ب_کارت #دریافت '
-                                 '#موفق</span></html>"}}]},"transferInfo":{"$type":"MapValue","items":[{'
-                                 '"key":"regarding","value":{"$type":"StringVal","text":"شماره انتقال: ۱۰۰۰۲\\nواریز '
-                                 'کننده: *محمدس*\\nنام دریافت کننده: *آقاکریمی*\\nشهر محل دریافت: *جنت آباد*\\nمبلغ: '
-                                 '*۱۰۰* ریال معادل *۰* افغانی"}},{"key":"isExpenditure","value":{"$type":"BooleanValue",'
-                                 '"value":false}},{"key":"payer","value":{"$type":"Int64Val","value":"1497526823"}},'
-                                 '{"key":"responseCode","value":{"$type":"StringVal","text":"00"}},{"key":"description",'
-                                 '"value":{"$type":"StringVal","text":"رسید سه"}},{"key":"serviceName",'
-                                 '"value":{"$type":"StringVal","text":"BAMDAD"}},{"key":"msgPeerId",'
-                                 '"value":{"$type":"Int64Val","value":"1424339448"}},{"key":"msgUID",'
-                                 '"value":{"$type":"StringVal","text":"713165279472439179-1547885000441"}},'
-                                 '{"key":"receiver","value":{"$type":"Int64Val","value":"1424339448"}},{"key":"msgRid",'
-                                 '"value":{"$type":"Int64Val","value":"713165279472439179"}},{"key":"amount",'
-                                 '"value":{"$type":"Int64Val","value":"100"}},{"key":"date","value":{"$type":"Int64Val",'
-                                 '"value":"1547885026141"}},{"key":"msgDate","value":{"$type":"Int64Val",'
-                                 '"value":"1547885000441"}},{"key":"status","value":{"$type":"StringVal",'
-                                 '"text":"SUCCESS"}},{"key":"requestId","value":{"$type":"StringVal",'
-                                 '"text":"a3e79293-788b-4682-a25b-6db64aea7f38"}},{"key":"traceNo",'
-                                 '"value":{"$type":"Int64Val","value":"113929"}},{"key":"receiptType",'
-                                 '"value":{"$type":"StringVal","text":"MoneyTransfer"}},{"key":"msgPeerType",'
-                                 '"value":{"$type":"Int64Val","value":"1"}}]}}}},"users":[[11,{"id":11,'
-                                 '"accessHash":"3192746565014995892","name":"رسید تراکنش","sex":1,"about":null,'
-                                 '"avatar":{"smallImage":{"fileLocation":{"fileId":"-7466032735434964736",'
-                                 '"accessHash":"538643987","fileStorageVersion":1},"width":100,"height":100,'
-                                 '"fileSize":1867},"largeImage":{"fileLocation":{"fileId":"9120643460453957889",'
-                                 '"accessHash":"538643987","fileStorageVersion":1},"width":200,"height":200,'
-                                 '"fileSize":3697},"fullImage":{"fileLocation":{"fileId":"2919809924124377345",'
-                                 '"accessHash":"538643987","fileStorageVersion":1},"width":800,"height":800,'
-                                 '"fileSize":15839}},"username":"receipt","isBot":true,"contactRecords":[],'
-                                 '"timeZone":null,"preferredLanguages":[],"botCommands":[]}]],"groups":[]}')
-
-    test_update_2 = FatSeqUpdate('{"$type":"FatSeqUpdate","seq":1342,"body":{"$type":"Message","peer":{"$type":"User",'
-                                 '"id":1497526823,"accessHash":"42289642128192331"},"sender":{"$type":"User",'
-                                 '"id":1497526823,"accessHash":"42289642128192331"},"date":"1547882922154",'
-                                 '"randomId":"-4756969014585788658","message":{"$type":"BankMessage","message":{'
-                                 '"$type":"ReceiptMessage","message":{"$type":"MapValue","items":[{"key":"fa",'
-                                 '"value":{"$type":"StringVal","text":"<html><span><b>انتقال '
-                                 'پول</b></span><br/><span>کارت ب کارت با موفقیت انجام شد.<br/>مبلغ: </span><span>۱۰۰ '
-                                 'ریال</span><br/><span>کارت مبدا: </span><span>۶۰۳۷۹۹XXXXXX۷۰۷۲</span><br/><span>کارت '
-                                 'مقصد: </span><span>۶۰۳۷۹۹XXXXXX۲۱۰۶</span><br/><span>صاحب کارت مقصد: </span><span>محمد '
-                                 'اژدری</span><br/><span>بابت: </span><span>شماره انتقال: 614381\\nواریز کننده: '
-                                 '*محمدس*\\nنام دریافت کننده: *محمدر*\\nشهر محل دریافت: *سداد*\\nمبلغ: *۱۰۰* ریال معادل '
-                                 '*۰* افغانی</span><br/><span>توضیحات: </span><span>رسید دوم</span><br/><span>شماره '
-                                 'پیگیری: </span><span>۹۰۲۷۸۸</span><br/><span>تاریخ انتقال: '
-                                 '</span><span><date>۱۵۴۷۸۸۲۹۲۲۰۹۴</date></span><br/><span>#کارت_ب_کارت #انتقال '
-                                 '#موفق</span></html>"}},{"key":"en","value":{"$type":"StringVal",'
-                                 '"text":"<html><span><b>انتقال پول</b></span><br/><span>کارت ب کارت با موفقیت انجام '
-                                 'شد.<br/>مبلغ: </span><span>۱۰۰ ریال</span><br/><span>کارت مبدا: '
-                                 '</span><span>۶۰۳۷۹۹XXXXXX۷۰۷۲</span><br/><span>کارت مقصد: '
-                                 '</span><span>۶۰۳۷۹۹XXXXXX۲۱۰۶</span><br/><span>صاحب کارت مقصد: </span><span>محمد '
-                                 'اژدری</span><br/><span>بابت: </span><span>شماره انتقال: 614381\\nواریز کننده: '
-                                 '*محمدس*\\nنام دریافت کننده: *محمدر*\\nشهر محل دریافت: *سداد*\\nمبلغ: *۱۰۰* ریال معادل '
-                                 '*۰* افغانی</span><br/><span>توضیحات: </span><span>رسید دوم</span><br/><span>شماره '
-                                 'پیگیری: </span><span>۹۰۲۷۸۸</span><br/><span>تاریخ انتقال: '
-                                 '</span><span><date>۱۵۴۷۸۸۲۹۲۲۰۹۴</date></span><br/><span>#کارت_ب_کارت #انتقال '
-                                 '#موفق</span></html>"}}]},"transferInfo":{"$type":"MapValue","items":[{'
-                                 '"key":"regarding","value":{"$type":"StringVal","text":"شماره انتقال: 614381\\nواریز '
-                                 'کننده: *محمدس*\\nنام دریافت کننده: *محمدر*\\nشهر محل دریافت: *سداد*\\nمبلغ: *۱۰۰* ریال '
-                                 'معادل *۰* افغانی"}},{"key":"isExpenditure","value":{"$type":"BooleanValue",'
-                                 '"value":false}},{"key":"payer","value":{"$type":"Int64Val","value":"1497526823"}},'
-                                 '{"key":"responseCode","value":{"$type":"StringVal","text":"00"}},{"key":"description",'
-                                 '"value":{"$type":"StringVal","text":"رسید دوم"}},{"key":"serviceName",'
-                                 '"value":{"$type":"StringVal","text":"BAMDAD"}},{"key":"msgPeerId",'
-                                 '"value":{"$type":"Int64Val","value":"1424339448"}},{"key":"msgUID",'
-                                 '"value":{"$type":"StringVal","text":"723409154399732071-1547882833882"}},'
-                                 '{"key":"receiver","value":{"$type":"Int64Val","value":"1424339448"}},{"key":"msgRid",'
-                                 '"value":{"$type":"Int64Val","value":"723409154399732071"}},{"key":"amount",'
-                                 '"value":{"$type":"Int64Val","value":"100"}},{"key":"date","value":{"$type":"Int64Val",'
-                                 '"value":"1547882922094"}},{"key":"msgDate","value":{"$type":"Int64Val",'
-                                 '"value":"1547882833882"}},{"key":"status","value":{"$type":"StringVal",'
-                                 '"text":"SUCCESS"}},{"key":"requestId","value":{"$type":"StringVal",'
-                                 '"text":"36e0e431-951e-4ec7-b7bf-ffe178c81979"}},{"key":"traceNo",'
-                                 '"value":{"$type":"Int64Val","value":"902788"}},{"key":"receiptType",'
-                                 '"value":{"$type":"StringVal","text":"MoneyTransfer"}},{"key":"msgPeerType",'
-                                 '"value":{"$type":"Int64Val","value":"1"}}]}}}},"users":[[1497526823,{"id":1497526823,'
-                                 '"accessHash":"42289642128192331","name":"S.shad","sex":1,"about":"سلام",'
-                                 '"avatar":{"smallImage":{"fileLocation":{"fileId":"-381332758481862397",'
-                                 '"accessHash":"1497526823","fileStorageVersion":1},"width":100,"height":100,'
-                                 '"fileSize":4587},"largeImage":{"fileLocation":{"fileId":"-6251778147657514752",'
-                                 '"accessHash":"1497526823","fileStorageVersion":1},"width":200,"height":200,'
-                                 '"fileSize":14759},"fullImage":{"fileLocation":{"fileId":"-5031855972771626750",'
-                                 '"accessHash":"1497526823","fileStorageVersion":1},"width":316,"height":316,'
-                                 '"fileSize":70328}},"username":"sshad","isBot":false,"contactRecords":[],'
-                                 '"timeZone":"Asia/Tehran","preferredLanguages":["fa-IR","fa"],"botCommands":[]}]],'
-                                 '"groups":[]}')
+    test_update_22 = FatSeqUpdate(
+        '{"$type":"FatSeqUpdate","seq":1257,"body":{"$type":"Message","peer":{"$type":"User","id":11,"accessHash":"-350560019069227129"},"sender":{"$type":"User","id":11,"accessHash":"-350560019069227129"},"date":"1552625889354","randomId":"2274453424573922247","message":{"$type":"BankMessage","message":{"$type":"ReceiptMessage","message":{"$type":"MapValue","items":[{"key":"fa","value":{"$type":"StringVal","text":"<html><span><b>انتقال پول</b></span><br/><span>مبلغ دریافتی: </span><span><font color=\'#40d0a3\'>۲۰+ ریال</font></span><br/><span>کارت مبدا: </span><span>۶۰۳۷۹۹XXXXXX۱۰۴۰</span><br/><span>کارت مقصد: </span><span>۶۰۳۷۶۹XXXXXX۵۴۴۸</span><br/><span>صاحب کارت مقصد: </span><span>محمد ایوبی </span><br/><span>واریزکننده: </span><span>احسان برخوردار - @ehsan</span><br/><span>بابت: </span><span>کد انتقال: *B۱۰۰۱*\\nنام واریز کننده: *حسن*\\nنام دریافت کننده: *مصطفی فرزند خالد*\\nولایت محل دریافت: *کابل*\\nآدرس صرافی: سینمای پامیر، جاده میوند، حیدری مارکیت، منزل اول، اتاق ۱۳۷، صرافی ضیاءالحق\\nمبلغ: *۲۰* ریال معادل *۰* افغانی</span><br/><span>توضیحات: </span><span>توضیحات</span><br/><span>شماره پیگیری: </span><span>۹۹۵۱۹۶</span><br/><span>تاریخ انتقال: </span><span><date>۱۵۵۲۶۲۵۸۸۹۲۹۳</date></span><br/><span>#کارت_ب_کارت #دریافت #موفق</span><br/><br/><span>🛎 خبر خوش داریم:</span><br/><span>🎊 در بله، جشنوارهٔ «پولتو راحت بریز» برپاست!</span><br/><span>🎉 تراکنش بزن و جایزه ببر! 👇 </span><br/><span><a href=\'http://bit.ly/2XAvW0L\'>http://bit.ly/2XAvW0L</a></span></html>"}},{"key":"en","value":{"$type":"StringVal","text":"<html><span><b>انتقال پول</b></span><br/><span>مبلغ دریافتی: </span><span><font color=\'#40d0a3\'>۲۰+ ریال</font></span><br/><span>کارت مبدا: </span><span>۶۰۳۷۹۹XXXXXX۱۰۴۰</span><br/><span>کارت مقصد: </span><span>۶۰۳۷۶۹XXXXXX۵۴۴۸</span><br/><span>صاحب کارت مقصد: </span><span>محمد ایوبی </span><br/><span>واریزکننده: </span><span>احسان برخوردار - @ehsan</span><br/><span>بابت: </span><span>کد انتقال: *B۱۰۰۱*\\nنام واریز کننده: *حسن*\\nنام دریافت کننده: *مصطفی فرزند خالد*\\nولایت محل دریافت: *کابل*\\nآدرس صرافی: سینمای پامیر، جاده میوند، حیدری مارکیت، منزل اول، اتاق ۱۳۷، صرافی ضیاءالحق\\nمبلغ: *۲۰* ریال معادل *۰* افغانی</span><br/><span>توضیحات: </span><span>توضیحات</span><br/><span>شماره پیگیری: </span><span>۹۹۵۱۹۶</span><br/><span>تاریخ انتقال: </span><span><date>۱۵۵۲۶۲۵۸۸۹۲۹۳</date></span><br/><span>#کارت_ب_کارت #دریافت #موفق</span><br/><br/><span>🛎 خبر خوش داریم:</span><br/><span>🎊 در بله، جشنوارهٔ «پولتو راحت بریز» برپاست!</span><br/><span>🎉 تراکنش بزن و جایزه ببر! 👇 </span><br/><span><a href=\'http://bit.ly/2XAvW0L\'>http://bit.ly/2XAvW0L</a></span></html>"}}]},"transferInfo":{"$type":"MapValue","items":[{"key":"regarding","value":{"$type":"StringVal","text":"کد انتقال: *B۱۰۰۱*\\nنام واریز کننده: *حسن*\\nنام دریافت کننده: *مصطفی فرزند خالد*\\nولایت محل دریافت: *کابل*\\nآدرس صرافی: سینمای پامیر، جاده میوند، حیدری مارکیت، منزل اول، اتاق ۱۳۷، صرافی ضیاءالحق\\nمبلغ: *۲۰* ریال معادل *۰* افغانی"}},{"key":"isExpenditure","value":{"$type":"BooleanValue","value":false}},{"key":"payer","value":{"$type":"Int64Val","value":"201707397"}},{"key":"responseCode","value":{"$type":"StringVal","text":"00"}},{"key":"description","value":{"$type":"StringVal","text":"توضیحات"}},{"key":"serviceName","value":{"$type":"StringVal","text":"BAMDAD"}},{"key":"msgPeerId","value":{"$type":"Int64Val","value":"373225249"}},{"key":"msgUID","value":{"$type":"StringVal","text":"1089955259788824658-1552622923355"}},{"key":"receiver","value":{"$type":"Int64Val","value":"373225249"}},{"key":"msgRid","value":{"$type":"Int64Val","value":"1089955259788824658"}},{"key":"amount","value":{"$type":"Int64Val","value":"20"}},{"key":"date","value":{"$type":"Int64Val","value":"1552625889293"}},{"key":"msgDate","value":{"$type":"Int64Val","value":"1552622923355"}},{"key":"status","value":{"$type":"StringVal","text":"SUCCESS"}},{"key":"requestId","value":{"$type":"StringVal","text":"1e95227c-6b54-4708-9a2c-d61ae16ed84a"}},{"key":"traceNo","value":{"$type":"Int64Val","value":"995196"}},{"key":"receiptType","value":{"$type":"StringVal","text":"MoneyTransfer"}},{"key":"msgPeerType","value":{"$type":"Int64Val","value":"1"}}]}}}},"users":[[11,{"id":11,"accessHash":"-350560019069227129","name":"رسید تراکنش","sex":1,"about":null,"avatar":{"smallImage":{"fileLocation":{"fileId":"-7466032735434964736","accessHash":"538643987","fileStorageVersion":1},"width":100,"height":100,"fileSize":1867},"largeImage":{"fileLocation":{"fileId":"9120643460453957889","accessHash":"538643987","fileStorageVersion":1},"width":200,"height":200,"fileSize":3697},"fullImage":{"fileLocation":{"fileId":"2919809924124377345","accessHash":"538643987","fileStorageVersion":1},"width":800,"height":800,"fileSize":15839}},"username":"receipt","isBot":true,"contactRecords":[],"timeZone":null,"preferredLanguages":[],"botCommands":[]}]],"groups":[]}')
 
 
 class BotMessages:
@@ -250,10 +125,6 @@ class ButtonText:
     provinces = ["کابل", "هرات", "مزار شریف", "قندهار"]
 
 
-provinces_to_branch_dict = {"کابل": BotTexts.money_changer_kabol, "هرات": BotTexts.money_changer_harat,
-                            "مزار شریف": BotTexts.money_changer_mazar}
-
-
 class Patterns:
     passive_loan_val = 'passive-{}'
     active_loan_val = 'active-{}'
@@ -267,6 +138,7 @@ class Patterns:
 
 
 class Step:
+    payment_success = "payment_success"
     request_receiver_father_name = "request_receiver_father_name"
     request_sender_father_name = "request_sender_father_name"
     user_panel = "user_panel"
@@ -299,7 +171,7 @@ class Step:
 
 
 class LogMessage:
-    payment_is_done = "Payment with message_id {} is done."
+    payment_is_done = "Payment with code {} is done."
     new_payment_added = "New payment added."
     user_added = "User with user_id {} joined to bot and added."
     db_error = "We have a db error in {} function."

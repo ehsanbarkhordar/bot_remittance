@@ -1,13 +1,16 @@
 import asyncio
+import re
 
 from balebot.filters import TemplateResponseFilter, TextFilter, DefaultFilter, BankMessageFilter
 from balebot.handlers import MessageHandler, CommandHandler
+from balebot.models.base_models import UserPeer
 from balebot.models.messages import TemplateMessage, TextMessage, PurchaseMessage, BankMessage
 from balebot.models.messages.banking.money_request_type import MoneyRequestType
 from balebot.updater import Updater
+from khayyam3 import JalaliDatetime
 
 from configs import BotConfig
-from constant.templates import BotButtons, Step, BotMessages, Patterns
+from constant.templates import BotButtons, Step, BotMessages, Patterns, LogMessage
 from bot.call_backs import step_success, step_failure
 from balebot.utils.logger import Logger
 
@@ -15,8 +18,8 @@ from database.models import PaymentRequest
 from database.operations import select_all_province_names, update_money_changer_remittance_fee_percent, \
     select_money_changer_by_peer_id, update_money_changer_dollar_rial, \
     update_money_changer_card_number, update_money_changer_dollar_afghani, insert_to_table, \
-    select_branches_by_money_changer_id, delete_from_table, select_money_changers, select_money_changer_by_id, \
-    select_last_payment_request
+    select_branches_by_money_changer_id, delete_from_table, select_ready_money_changers, select_money_changer_by_id, \
+    select_last_payment_request, update_money_changer_access_hash, select_payment_with_code, update_payment_is_done
 from utils.utils import *
 
 loop = asyncio.get_event_loop()
@@ -35,10 +38,12 @@ def send_message(message, peer, step, succedent_message=None):
                      failure_callback=step_failure, kwargs=kwargs)
 
 
-@dispatcher.message_handler(DefaultFilter())
+# @dispatcher.message_handler(DefaultFilter())
 def start(bot, update):
     user_peer = update.get_effective_user()
     money_changer = select_money_changer_by_peer_id(user_peer.peer_id)
+    if money_changer and money_changer.access_hash is None:
+        update_money_changer_access_hash(money_changer, user_peer.access_hash)
     if money_changer and isinstance(money_changer, MoneyChanger):
         money_changer_panel(bot, update)
     else:
@@ -90,7 +95,7 @@ def request_money_changer(bot, update):
     user_peer = update.get_effective_user()
     sender_name = update.get_effective_message().text
     dispatcher.set_conversation_data(update, key="sender_name", value=sender_name)
-    money_changers = select_money_changers()
+    money_changers = select_ready_money_changers()
     buttons_list, keywords = get_buttons_from_money_changers(money_changers)
     if buttons_list:
         buttons_list += [BotButtons.back_to_main_menu]
@@ -179,7 +184,7 @@ def get_amount(bot, update):
     user_peer = update.get_effective_user()
     amount = update.get_effective_message().text
     if amount.isnumeric():
-        dispatcher.set_conversation_data(update, "remittance_amount", amount)
+        dispatcher.set_conversation_data(update, "rial", amount)
         send_payment_message(bot, update)
     else:
         template_message = TemplateMessage(TextMessage(BotTexts.invalid_amount), [BotButtons.back_to_main_menu])
@@ -191,7 +196,7 @@ def get_amount(bot, update):
 
 def send_payment_message(bot, update):
     user_peer = update.get_effective_user()
-    remittance_amount = dispatcher.get_conversation_data(update, "remittance_amount")
+    rial = dispatcher.get_conversation_data(update, "rial")
     receiver_name = dispatcher.get_conversation_data(update, "receiver_name")
     receiver_father_name = dispatcher.get_conversation_data(update, "receiver_father_name")
     sender_name = dispatcher.get_conversation_data(update, "sender_name")
@@ -205,82 +210,87 @@ def send_payment_message(bot, update):
     photo_message = BotMessages.money_request_photo_message
     dollar_rial = float(money_changer.dollar_rial)
     dollar_afghani = float(money_changer.dollar_afghani)
-    afghani = change_rial_to_afghan_currency(rial=int(remittance_amount),
+    afghani = change_rial_to_afghan_currency(rial=int(rial),
                                              dollar_rial=dollar_rial,
                                              dollar_afghani=dollar_afghani,
                                              remittance_fee_percent=money_changer.remittance_fee_percent)
     afghan_currency_amount = thousand_separator(int(afghani))
     last_payment_request = select_last_payment_request()
     if last_payment_request:
-        last_payment_request_id = last_payment_request.id
+        last_payment_request_id = last_payment_request.id + 1
     else:
         last_payment_request_id = 1
-    message_id = "B" + str(1000 + last_payment_request_id)
-    amount_message = thousand_separator(remittance_amount)
+    payment_code = "B" + str(1000 + last_payment_request_id)
+    amount_message = thousand_separator(rial)
     money_request_caption = BotTexts.money_request_caption.format(
-        message_id, sender_name, receiver_name, receiver_father_name,
+        payment_code, sender_name, receiver_name, receiver_father_name,
         branch.province, branch.address, amount_message,
         afghan_currency_amount)
     money_request_caption = eng_to_arabic_number(money_request_caption)
 
     photo_message.caption_text = TextMessage(money_request_caption)
     logger.info("success send payment request" + "account_number: {}, amount: {}".format(money_changer.card_number,
-                                                                                         remittance_amount))
-    purchase_message = PurchaseMessage(account_number=money_changer.card_number, amount=int(remittance_amount),
+                                                                                         rial))
+    purchase_message = PurchaseMessage(account_number=money_changer.card_number, amount=int(rial),
                                        money_request_type=MoneyRequestType.normal, msg=photo_message)
     send_message(message=purchase_message, peer=user_peer, step=Step.send_payment_message)
-    payment_request = PaymentRequest(message_id=message_id, payer_peer_id=user_peer.peer_id,
-                                     money_changer_peer_id=money_changer.peer_id, sender_name=sender_name,
-                                     receiver_name=receiver_name + "-" + receiver_father_name, province=province,
-                                     money_changer_branch_id=int(branch_id), remittance_amount=int(remittance_amount))
+    receiver_name = receiver_name + "-" + receiver_father_name
+    payment_request = PaymentRequest(code=payment_code, payer_peer_id=user_peer.peer_id,
+                                     payer_access_hash=user_peer.access_hash,
+                                     money_changer_peer_id=money_changer.peer_id,
+                                     money_changer_access_hash=money_changer.access_hash,
+                                     sender_name=sender_name,
+                                     receiver_name=receiver_name,
+                                     province=province,
+                                     branch_address=branch.address,
+                                     rial_amount=float(rial),
+                                     afghani_amount=float(afghani),
+                                     money_changer_branch_id=int(branch_id))
     insert_to_table(payment_request)
     dispatcher.finish_conversation(update)
 
 
-# @dispatcher.message_handler(BankMessageFilter())
-# def send_report(bot, update):
-#     # update = test_update_2
-#     message = update.get_effective_message()
-#     user_peer = update.get_effective_user()
-#     user_id = user_peer.peer_id
-#     if isinstance(message, BankMessage) and int(user_id) == 11:
-#         receipt = message.get_receipt()
-#         message_id = receipt.regarding.splitlines()[0]
-#         print(message_id)
-#         message_id = int(re.search(r'\d+', message_id).group())
-#         print(message_id)
-#         payment = get_payment_with_message_id(message_id)
-#         owner = payment.owner
-#         owner_user = UserPeer(peer_id=owner.user_id, access_hash=owner.access_hash)
-#         money_changer_user_id = 776725385
-#         money_changer_access_hash = "-3564513944394449112"
-#         muhammad_user_id = 1314892980
-#         muhammad_access_hash = "6115941441665528566"
-#         money_changer = UserPeer(peer_id=money_changer_user_id, access_hash=money_changer_access_hash)
-#         muhammad = UserPeer(peer_id=muhammad_user_id, access_hash=muhammad_access_hash)
-#
-#         afghan_amount = eng_to_arabic_number(int(change_rial_to_afghan_currency(int(payment.money_amount), 140)))
-#         money_amount = eng_to_arabic_number(thousand_separator(payment.money_amount))
-#         report_message = TextMessage(
-#             BotTexts.report_message.format(payment.receiver_name, payment.destination_city_name,
-#                                            eng_to_arabic_number(message_id),
-#                                            afghan_amount, money_amount,
-#                                            BotTexts.payment_date))
-#         update_payment_is_done(message_id)
-#         print(report_message.text)
-#
-#         send_message(report_message, money_changer, Step.send_report)
-#         send_message(report_message, owner_user, Step.send_report)
-#         send_message(report_message, muhammad, Step.send_report)
-#         dispatcher.register_conversation_next_step_handler(update, handlers=[
-#                                                                                 MessageHandler(TextFilter(
-#                                                                                     BotTexts.back_to_main_menu),
-#                                                                                     user_panel)
-#                                                                             ] + common_handlers)
-#
+@dispatcher.message_handler(DefaultFilter())
+def payment_success(bot, update):
+    update = BotTexts.test_update_22
+    message = update.get_effective_message()
+    user_peer = update.get_effective_user()
+    peer_id = user_peer.peer_id
+    peer_id = 11
+    if isinstance(message, BankMessage) and peer_id == 11:
+        receipt = message.get_receipt()
+        code = receipt.regarding.splitlines()[0]
+        code = int(re.search(r'\d+', code).group())
+        code = "B" + str(code)
+        payment = select_payment_with_code(code)
+        if isinstance(payment, PaymentRequest):
+            logger.info(LogMessage.payment_is_done.format(code))
+            update_payment_is_done(payment)
+            admin_user_id = BotConfig.admin_peer_id
+            admin_access_hash = BotConfig.admin_access_hash
+            payer = UserPeer(payment.payer_peer_id, payment.payer_access_hash)
+            money_changer = UserPeer(payment.money_changer_peer_id, payment.money_changer_access_hash)
+            admin = UserPeer(admin_user_id, admin_access_hash)
+
+            afghan_amount = eng_to_arabic_number(thousand_separator(int(payment.afghani_amount)))
+            rial_amount = eng_to_arabic_number(thousand_separator(int(payment.rial_amount)))
+            receiver_name = payment.receiver_name.split("-")[0]
+            receiver_father_name = payment.receiver_name.split("-")[1]
+            receiver = receiver_name + BotTexts.son + receiver_father_name
+            payment_j_datetime = JalaliDatetime.from_datetime(payment.pay_date_time).strftime('%C')
+            payment_j_datetime = eng_to_arabic_number(payment_j_datetime)
+            report_message = TextMessage(BotTexts.report_message.format(payment_j_datetime,
+                                                                        payment.sender_name, receiver,
+                                                                        eng_to_arabic_number(code),
+                                                                        payment.province, payment.branch_address,
+                                                                        rial_amount, afghan_amount
+                                                                        ))
+            send_message(report_message, money_changer, Step.payment_success)
+            send_message(report_message, payer, Step.payment_success)
+            send_message(report_message, admin, Step.payment_success)
+
 
 # +++++++++++++++++++++++++++++++++++++++ Money Changer Panel ++++++++++++++++++++++++++++++++++++++++++++++++
-# @dispatcher.message_handler(TemplateResponseFilter([BotButtons.money_changer_panel.value]))
 def money_changer_panel(bot, update):
     user_peer = update.get_effective_user()
 

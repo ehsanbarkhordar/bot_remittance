@@ -2,6 +2,8 @@ import os
 
 
 class BotConfig:
+    admin_access_hash = os.environ.get('ADMIN_ACCESS_HASH', "4635134167894078140")
+    admin_peer_id = int(os.environ.get('ADMIN_PEER_ID', "201707397"))
     re_uploading_max_try = int(os.environ.get('RE_UPLOADING_MAX_TRY', 3))
     resending_max_try = int(os.environ.get('RESENDING_MAX_TRY', 3))
     admin_list = os.environ.get('ADMIN_LIST', "201707397")

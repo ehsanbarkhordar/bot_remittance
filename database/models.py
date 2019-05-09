@@ -62,7 +62,7 @@ class PaymentRequest(Base):
 
     def __init__(self, code, payer_peer_id, payer_access_hash, money_changer_peer_id, money_changer_access_hash,
                  sender_name, receiver_name, province, branch_address, rial_amount, afghani_amount,
-                 money_changer_branch_id, creation_date_time=datetime.datetime.now()):
+                 money_changer_branch_id, creation_date_time):
         self.code = code
         self.money_changer_peer_id = money_changer_peer_id
         self.money_changer_access_hash = money_changer_access_hash

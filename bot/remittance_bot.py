@@ -1,4 +1,5 @@
 import asyncio
+import datetime
 import re
 
 from balebot.filters import TemplateResponseFilter, TextFilter, DefaultFilter, BankMessageFilter
@@ -243,7 +244,7 @@ def send_payment_message(bot, update):
                                      branch_address=branch.address,
                                      rial_amount=float(rial),
                                      afghani_amount=float(afghani),
-                                     money_changer_branch_id=int(branch_id))
+                                     money_changer_branch_id=int(branch_id), creation_date_time=datetime.datetime.now())
     insert_to_table(payment_request)
     dispatcher.finish_conversation(update)
 

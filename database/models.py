@@ -1,5 +1,3 @@
-import datetime
-
 from sqlalchemy import Column, String, Integer, Text, Float, DateTime, Boolean
 from sqlalchemy.ext.declarative import declarative_base
 
@@ -17,8 +15,11 @@ class MoneyChanger(Base):
     dollar_afghani = Column(Float, default=75)
     remittance_fee_percent = Column(Float, default=1)
 
-    def __init__(self, peer_id, name, card_number, dollar_rial, dollar_afghani, remittance_fee_percent):
+    def __init__(self, peer_id, name, card_number, dollar_rial, dollar_afghani, remittance_fee_percent,
+                 access_hash=None):
         self.peer_id = peer_id
+        if access_hash:
+            self.access_hash = access_hash
         self.name = name
         self.card_number = card_number
         self.dollar_rial = dollar_rial

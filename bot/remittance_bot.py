@@ -206,7 +206,6 @@ def send_payment_message(bot, update):
 
     branch = get_branch_with_branch_id(branches, branch_id)
 
-    photo_message = BotMessages.money_request_photo_message
     dollar_rial = float(money_changer.dollar_rial)
     dollar_afghani = float(money_changer.dollar_afghani)
     afghani = change_rial_to_afghan_currency(rial=int(rial),
@@ -227,6 +226,7 @@ def send_payment_message(bot, update):
         afghan_currency_amount)
     money_request_caption = eng_to_arabic_number(money_request_caption)
 
+    photo_message = BotMessages.money_request_photo_message
     photo_message.caption_text = TextMessage(money_request_caption)
     logger.info("success send payment request" + "account_number: {}, amount: {}".format(money_changer.card_number,
                                                                                          rial))

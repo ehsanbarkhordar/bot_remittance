@@ -4,9 +4,9 @@ from balebot.models.messages import TemplateMessageButton, PhotoMessage, TextMes
 
 class BotTexts:
     son = " ولد "
-    wage = "{} تومان کارمزد برای یک میلیون تومان"
+    wage = "یک میلیون تومان می شود {} افغانی"
     choose_province = "*ولایت* مورد نظر خود را انتخاب کنید:"
-    no_money_changer_found = "هیج صرافی یافت نشد!"
+    no_money_changer_found = "هیچ صرافی یافت نشد!"
     branch_deleted_successfully = "شعبه مورد نظر با موفقیت حذف شد."
     no_branches_found = "هیچ شعبه ای یافت نشد!"
     choose_branch_for_remove = "شعبه مورد نظر برای حذف را انتخاب کنید:"
@@ -29,7 +29,7 @@ class BotTexts:
     choose_or_enter_province = "ولایت را وارد یا از بین گزینه ها انتخاب کنید:"
     enter_sender_father_name = "لطفا نام پدر پرداخت کننده را وارد کنید:"
     enter_sender_name = "لطفا *نام و نام خانوادگی* واریز کننده را وارد کنید:"
-    choose_one_money_changer = "لطفا صرافی موردنظر خود را از بین صرافی‌های زیر *انتخاب* کنید:"
+    choose_one_money_changer = "لطفا صرافی موردنظر خود را از بین صرافی‌های زیر به دقت *انتخاب* کنید:"
     back_to_main_menu = "بازگشت به منوی اصلی"
     invalid_amount = "ورودی اشتباه است،\nلطفاً مبلغ را به *عدد* وارد کنید:"
     enter_amount = "لطفاً مبلغ را به *ریال* وارد کنید:"

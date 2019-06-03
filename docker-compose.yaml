@@ -11,8 +11,6 @@ services:
       - TZ=Asia/Tehran
     volumes:
       - /home/docker/volumes/pg_remittance/postgres/:/var/lib/postgresql/data/
-    ports:
-      - "5433:5432"
   bot_remittance:
     image: barkhordar/bot_remittance:0.2-3
     container_name: bot_remittance

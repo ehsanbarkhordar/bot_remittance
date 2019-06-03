@@ -74,11 +74,17 @@ def get_buttons_from_money_changers(money_changers):
     keywords = []
     for changer in money_changers:
         if isinstance(changer, MoneyChanger):
-            keywords.append(str(changer.id))
-            remittance_rate = calculate_remittance_rate(changer.remittance_fee_percent)
-            remittance_wage_for_one_million = eng_to_arabic_number(str(thousand_separator(remittance_rate)))
-            text = changer.name + "/ " + BotTexts.wage.format(remittance_wage_for_one_million)
+            dollar_rial = float(changer.dollar_rial)
+            dollar_afghani = float(changer.dollar_afghani)
+            afghani = change_rial_to_afghan_currency(rial=int(10000000),
+                                                     dollar_rial=dollar_rial,
+                                                     dollar_afghani=dollar_afghani,
+                                                     remittance_fee_percent=changer.remittance_fee_percent)
+            afghan_currency_amount = eng_to_arabic_number(thousand_separator(int(afghani)))
+            text = changer.name + "/ " + BotTexts.wage.format(afghan_currency_amount)
             btn_list.append(TemplateMessageButton(text=text, value=changer.id, action=0))
+            keywords.append(str(changer.id))
+
     return btn_list, keywords
 
 

@@ -10,7 +10,7 @@ services:
       - POSTGRES_DB=my_db
       - TZ=Asia/Tehran
     volumes:
-      - /home/docker/volumes/pg_remittance/postgres/:/var/lib/postgresql/data/
+      - /home/ubuntu/volumes/pg_remittance/postgres/:/var/lib/postgresql/data/
   bot_remittance:
     image: bot_remittance:0.7-8
     container_name: bot_remittance
@@ -32,7 +32,6 @@ services:
       - GRAYLOG_PORT=12201
       - LOG_LEVEL=10
       - LOG_FACILITY_NAME=bot_remittance_facility
-      - MONITORING_HASH=cabb3f498ac5a037f669f658f1be08c3
-    restart: always # use always
+    restart: always
     depends_on:
       - pg_remittance

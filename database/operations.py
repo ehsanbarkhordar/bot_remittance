@@ -125,3 +125,7 @@ def select_last_payment_request():
 
 def select_payment_with_code(code):
     return session.query(PaymentRequest).filter(PaymentRequest.code == code).one_or_none()
+
+
+def select_all_payments():
+    return session.query(PaymentRequest).all()

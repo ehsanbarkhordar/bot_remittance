@@ -5,20 +5,21 @@ import re
 from balebot.filters import TemplateResponseFilter, TextFilter, DefaultFilter, BankMessageFilter
 from balebot.handlers import MessageHandler, CommandHandler
 from balebot.models.base_models import UserPeer
-from balebot.models.messages import TemplateMessage, TextMessage, PurchaseMessage, BankMessage
+from balebot.models.messages import TemplateMessage, TextMessage, PurchaseMessage, BankMessage, DocumentMessage
 from balebot.models.messages.banking.money_request_type import MoneyRequestType
 from balebot.updater import Updater
+from balebot.utils.util_functions import get_file_buffer, get_file_size
 from khayyam3 import JalaliDatetime
 
 from constant.templates import BotButtons, Step, BotMessages, Patterns, LogMessage
 from bot.call_backs import step_success, step_failure
 from balebot.utils.logger import Logger
-from database.models import PaymentRequest
 from database.operations import select_all_province_names, update_money_changer_remittance_fee_percent, \
     select_money_changer_by_peer_id, update_money_changer_dollar_rial, \
     update_money_changer_card_number, update_money_changer_dollar_afghani, insert_to_table, \
     select_branches_by_money_changer_id, delete_from_table, select_ready_money_changers, select_money_changer_by_id, \
-    select_last_payment_request, update_money_changer_access_hash, select_payment_with_code, update_payment_is_done
+    select_last_payment_request, update_money_changer_access_hash, select_payment_with_code, update_payment_is_done, \
+    select_all_payments
 from utils.utils import *
 
 loop = asyncio.get_event_loop()
@@ -282,12 +283,39 @@ def payment_success(bot, update):
                                                                         ))
             send_message(report_message, money_changer, Step.payment_success)
             send_message(report_message, payer, Step.payment_success)
-            admins = BotConfig.admin_list.split('#')
-            for admin in admins:
-                admin_user_id = admin.split('*')[0]
-                admin_access_hash = admin.split('*')[1]
-                admin_peer = UserPeer(admin_user_id, admin_access_hash)
-                send_message(report_message, admin_peer, Step.payment_success)
+            admin_list = get_admin_peers()
+            for admin in admin_list:
+                send_message(report_message, admin, Step.payment_success)
+
+
+@dispatcher.command_handler('/report')
+def get_excel_report(bot, update):
+    user_peer = update.get_effective_user()
+    if is_admin(user_peer.peer_id):
+        payments = select_all_payments()
+        file = create_excel(payments)
+        file_size = get_file_size(file=file)
+        name = datetime.datetime.today().date().isoformat() + ".csv"
+
+        def success_upload_document(user_data, server_response):
+            file_id = str(server_response.get("file_id", None))
+            access_hash = str(server_response.get("user_id", None))
+            document_message = DocumentMessage(file_id=file_id, access_hash=access_hash, name=name,
+                                               file_size=file_size, mime_type=BotConfig.excel_mime_type,
+                                               caption_text=TextMessage(text=name),
+                                               file_storage_version=1)
+            admin_list = get_admin_peers()
+            for admin in admin_list:
+                kwargs = {"user_peer": admin, "step_name": 'excel_report', "succedent_message": None,
+                          "message": document_message, "attempt": 1, "bot": bot}
+                bot.send_message(message=document_message, peer=admin, success_callback=step_success,
+                                 failure_callback=step_failure, kwargs=kwargs)
+
+        def failure_upload_document(user_data, server_response):
+            pass
+
+        bot.upload_file(file=file, file_type="file", success_callback=success_upload_document,
+                        failure_callback=failure_upload_document)
 
 
 # +++++++++++++++++++++++++++++++++++++++ Money Changer Panel ++++++++++++++++++++++++++++++++++++++++++++++++
@@ -480,6 +508,7 @@ def update_money_changer(bot, update):
 common_handlers = [
     CommandHandler(commands=["/start"], callback=start),
     CommandHandler(commands=["/help"], callback=help_me),
+    CommandHandler(commands=["/report"], callback=get_excel_report),
     MessageHandler(TemplateResponseFilter(keywords=[BotButtons.help.value]), callback=help_me),
     MessageHandler(TemplateResponseFilter(keywords=[BotButtons.back_to_main_menu.value]), callback=start)
 ]

@@ -1,9 +1,13 @@
+import csv
+import os
 from random import randint
+
+from balebot.models.base_models import UserPeer
 from balebot.models.messages import TemplateMessageButton
 
 from configs import BotConfig
 from constant.templates import BotTexts
-from database.models import MoneyChangerBranch, MoneyChanger
+from database.models import MoneyChangerBranch, MoneyChanger, PaymentRequest
 
 
 def generate_random_number(n):
@@ -39,12 +43,22 @@ def thousand_separator(number):
 
 
 def is_admin(peer_id):
-    admin_list = BotConfig.admin_list
-    admin_list = admin_list.split("-")
-    if peer_id in admin_list:
-        return True
-    else:
-        return False
+    admin_list = get_admin_peers()
+    for admin in admin_list:
+        if peer_id == admin.peer_id:
+            return True
+    return False
+
+
+def get_admin_peers():
+    admin_list = []
+    admins = BotConfig.admin_list.split('#')
+    for admin in admins:
+        admin_user_id = admin.split('*')[0]
+        admin_access_hash = admin.split('*')[1]
+        admin_peer = UserPeer(admin_user_id, admin_access_hash)
+        admin_list.append(admin_peer)
+    return admin_list
 
 
 def get_template_buttons_from_list(input_list):
@@ -112,3 +126,15 @@ def get_branch_with_branch_id(branches, branch_id):
     for branch in branches:
         if branch.id == int(branch_id):
             return branch
+
+
+def create_excel(records):
+    file_path = 'mydump.csv'
+    outfile = open(file_path, 'w')
+    outcsv = csv.writer(outfile)
+    [outcsv.writerow([getattr(curr, column.name) for column in PaymentRequest.__mapper__.columns]) for curr in records]
+    outfile.close()
+    with open(file_path, 'rb') as f:
+        f_bytes = f.read()
+        os.remove(file_path)
+        return f_bytes

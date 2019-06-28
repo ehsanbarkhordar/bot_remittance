@@ -12,7 +12,7 @@ services:
     volumes:
       - /home/docker/volumes/pg_remittance/postgres/:/var/lib/postgresql/data/
   bot_remittance:
-    image: barkhordar/bot_remittance:0.2-3
+    image: barkhordar/bot_remittance:0.7-8
     container_name: bot_remittance
     environment:
       #   PostgreSQL Config
@@ -23,7 +23,8 @@ services:
       - POSTGRES_PORT=5432
       #   Config
       - BASE_URL=wss://api.bale.ai/v1/bots/
-      - BOT_TOKEN=a9f06fec310400da3d0e3c6f3bbd8e9bba34089a
+      - ADMIN_LIST=1417824523*-1676146566137099040#776725385*-4527196475141578387
+      - BOT_TOKEN=81b121841dd2506048a0e2a3c18c14ab3fba29ab
       #   Log config
       - USE_GRAYLOG=0
       - SOURCE=bot_remittance_source

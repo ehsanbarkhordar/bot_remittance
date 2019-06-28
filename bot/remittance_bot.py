@@ -263,11 +263,9 @@ def payment_success(bot, update):
         if isinstance(payment, PaymentRequest):
             logger.info(LogMessage.payment_is_done.format(code))
             update_payment_is_done(payment)
-            admin_user_id = BotConfig.admin_peer_id
-            admin_access_hash = BotConfig.admin_access_hash
+
             payer = UserPeer(payment.payer_peer_id, payment.payer_access_hash)
             money_changer = UserPeer(payment.money_changer_peer_id, payment.money_changer_access_hash)
-            admin = UserPeer(admin_user_id, admin_access_hash)
 
             afghan_amount = eng_to_arabic_number(thousand_separator(int(payment.afghani_amount)))
             rial_amount = eng_to_arabic_number(thousand_separator(int(payment.rial_amount)))
@@ -284,7 +282,12 @@ def payment_success(bot, update):
                                                                         ))
             send_message(report_message, money_changer, Step.payment_success)
             send_message(report_message, payer, Step.payment_success)
-            send_message(report_message, admin, Step.payment_success)
+            admins = BotConfig.admin_list.split('#')
+            for admin in admins:
+                admin_user_id = admin.split('*')[0]
+                admin_access_hash = admin.split('*')[1]
+                admin_peer = UserPeer(admin_user_id, admin_access_hash)
+                send_message(report_message, admin_peer, Step.payment_success)
 
 
 # +++++++++++++++++++++++++++++++++++++++ Money Changer Panel ++++++++++++++++++++++++++++++++++++++++++++++++
